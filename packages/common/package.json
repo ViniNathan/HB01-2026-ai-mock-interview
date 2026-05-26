@@ -8,7 +8,9 @@
   "scripts": {
     "check-types": "tsc --noEmit"
   },
-  "dependencies": {},
+  "dependencies": {
+    "zod": "catalog:"
+  },
   "devDependencies": {
     "@hackathon2026/config": "workspace:*",
     "@types/bun": "catalog:",

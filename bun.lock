@@ -124,6 +124,9 @@
     "packages/common": {
       "name": "@hackathon2026/common",
       "version": "0.0.0",
+      "dependencies": {
+        "zod": "catalog:",
+      },
       "devDependencies": {
         "@hackathon2026/config": "workspace:*",
         "@types/bun": "catalog:",
