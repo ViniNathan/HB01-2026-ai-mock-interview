@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import type { IMailer } from "../protocols/mailer";
 import type { IPasswordHasher } from "../protocols/password-hasher";
 import type {
   ITokenService,
@@ -30,6 +31,14 @@ vi.mock("@hackathon2026/common", async (importOriginal) => {
   };
 });
 
+vi.mock("@hackathon2026/env/server", () => ({
+  env: {
+    JWT_SECRET: "test-jwt-secret-at-least-32-characters",
+    FRONTEND_URL: "http://localhost:3001",
+    RESET_PASSWORD_JWT_EXPIRE_IN: "1h",
+  },
+}));
+
 import {
   BadRequestError,
   UnauthorizedError,
@@ -56,10 +65,14 @@ class StubPasswordHasher implements IPasswordHasher {
 
 class StubTokenService implements ITokenService {
   signResult = "access-jwt";
+  decodeResult: TokenPayload | null = null;
+  verifyError: Error | null = null;
   readonly signCalls: Array<{
     payload: TokenPayload;
     options?: SignTokenOptions;
   }> = [];
+  readonly verifyCalls: Array<{ token: string; secret?: string }> = [];
+  readonly decodeCalls: string[] = [];
 
   sign(payload: TokenPayload, options?: SignTokenOptions): string {
     this.signCalls.push({ payload, options });
@@ -67,14 +80,28 @@ class StubTokenService implements ITokenService {
   }
 
   verify<T extends TokenPayload = TokenPayload>(
-    _token: string,
-    _secret?: string,
+    token: string,
+    secret?: string,
   ): T {
-    throw new Error("StubTokenService.verify is not implemented");
+    this.verifyCalls.push({ token, secret });
+    if (this.verifyError) {
+      throw this.verifyError;
+    }
+    return { userId: 1 } as unknown as T;
   }
 
-  decode<T extends TokenPayload = TokenPayload>(_token: string): T | null {
-    return null;
+  decode<T extends TokenPayload = TokenPayload>(token: string): T | null {
+    this.decodeCalls.push(token);
+    return this.decodeResult as T | null;
+  }
+}
+
+class StubMailer implements IMailer {
+  readonly sendCalls: Array<{ to: string; subject: string; body: string }> =
+    [];
+
+  async send(to: string, subject: string, body: string): Promise<void> {
+    this.sendCalls.push({ to, subject, body });
   }
 }
 
@@ -101,6 +128,7 @@ const sampleUser = {
 describe("AuthService", () => {
   let passwordHasher: StubPasswordHasher;
   let tokenService: StubTokenService;
+  let mailer: StubMailer;
   let service: AuthService;
 
   beforeEach(() => {
@@ -108,10 +136,12 @@ describe("AuthService", () => {
     stubLogger.warnCalls.length = 0;
     passwordHasher = new StubPasswordHasher();
     tokenService = new StubTokenService();
+    mailer = new StubMailer();
     service = new AuthService(
       mockUserRepository,
       passwordHasher,
       tokenService,
+      mailer,
     );
     mockRandomUUID
       .mockReturnValueOnce("refresh-id-uuid")
@@ -315,6 +345,102 @@ describe("AuthService", () => {
       ).not.toHaveBeenCalled();
       expect(tokenService.signCalls).toHaveLength(0);
       expect(mockUserRepository.saveRefreshToken).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("requestPasswordReset", () => {
+    it("signs a reset token with derived secret and sends email when user exists", async () => {
+      vi.mocked(mockUserRepository.getByEmail).mockResolvedValue(sampleUser);
+      tokenService.signResult = "reset-jwt-token";
+
+      await service.requestPasswordReset(sampleUser.email);
+
+      expect(mockUserRepository.getByEmail).toHaveBeenCalledWith(
+        sampleUser.email,
+      );
+      expect(tokenService.signCalls).toEqual([
+        {
+          payload: { userId: sampleUser.id },
+          options: {
+            secret: `test-jwt-secret-at-least-32-characters${sampleUser.password}`,
+            expiresIn: "1h",
+          },
+        },
+      ]);
+      expect(mailer.sendCalls).toEqual([
+        {
+          to: sampleUser.email,
+          subject: "Password reset",
+          body: "Use the following link to reset your password: http://localhost:3001/reset-password?token=reset-jwt-token",
+        },
+      ]);
+    });
+
+    it("returns silently without sending email when user does not exist", async () => {
+      vi.mocked(mockUserRepository.getByEmail).mockResolvedValue(null);
+
+      await expect(
+        service.requestPasswordReset("missing@example.com"),
+      ).resolves.toBeUndefined();
+
+      expect(tokenService.signCalls).toHaveLength(0);
+      expect(mailer.sendCalls).toHaveLength(0);
+    });
+  });
+
+  describe("resetPassword", () => {
+    it("verifies token with derived secret, hashes password, and updates user", async () => {
+      tokenService.decodeResult = { userId: sampleUser.id };
+      vi.mocked(mockUserRepository.getById).mockResolvedValue(sampleUser);
+      vi.mocked(mockUserRepository.update).mockResolvedValue({
+        ...sampleUser,
+        password: "hashed-secret",
+      });
+
+      await service.resetPassword("reset-jwt-token", "new-password");
+
+      expect(tokenService.decodeCalls).toEqual(["reset-jwt-token"]);
+      expect(mockUserRepository.getById).toHaveBeenCalledWith(sampleUser.id);
+      expect(tokenService.verifyCalls).toEqual([
+        {
+          token: "reset-jwt-token",
+          secret: `test-jwt-secret-at-least-32-characters${sampleUser.password}`,
+        },
+      ]);
+      expect(passwordHasher.hashCalls).toEqual(["new-password"]);
+      expect(mockUserRepository.update).toHaveBeenCalledWith(sampleUser.id, {
+        password: "hashed-secret",
+      });
+    });
+
+    it("throws UnauthorizedError when token is invalid or expired", async () => {
+      tokenService.decodeResult = { userId: sampleUser.id };
+      vi.mocked(mockUserRepository.getById).mockResolvedValue(sampleUser);
+      tokenService.verifyError = new Error("invalid signature");
+
+      await expect(
+        service.resetPassword("bad-token", "new-password"),
+      ).rejects.toMatchObject({
+        name: "UnauthorizedError",
+        statusCode: 401,
+      });
+
+      expect(passwordHasher.hashCalls).toHaveLength(0);
+      expect(mockUserRepository.update).not.toHaveBeenCalled();
+    });
+
+    it("throws UnauthorizedError when decoded token has no userId", async () => {
+      tokenService.decodeResult = {};
+
+      await expect(
+        service.resetPassword("malformed-token", "new-password"),
+      ).rejects.toMatchObject({
+        name: "UnauthorizedError",
+        statusCode: 401,
+      });
+
+      expect(mockUserRepository.getById).not.toHaveBeenCalled();
+      expect(tokenService.verifyCalls).toHaveLength(0);
     });
   });
 });
