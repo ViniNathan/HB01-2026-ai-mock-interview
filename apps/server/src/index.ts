@@ -1,40 +1,11 @@
-import { createContext } from "@hackathon2026/api/context";
-import { appRouter } from "@hackathon2026/api/routers/index";
-import { env } from "@hackathon2026/env/server";
-import { createExpressMiddleware } from "@trpc/server/adapters/express";
-import cors from "cors";
-import express from "express";
+import "@hackathon2026/env/server";
 
-import { setupRoutes } from "./config/routes";
+import { env } from "@hackathon2026/env/server";
+
+import { createApp } from "./config/app";
 
 async function main(): Promise<void> {
-  const app = express();
-
-  app.use(
-    cors({
-      origin: env.CORS_ORIGIN,
-      methods: ["GET", "POST", "OPTIONS"],
-      allowedHeaders: ["Content-Type", "Authorization"],
-      credentials: true,
-    }),
-  );
-
-  app.use(express.json());
-
-  await setupRoutes(app);
-
-  app.use(
-    "/trpc",
-    createExpressMiddleware({
-      router: appRouter,
-      createContext,
-    }),
-  );
-
-  app.get("/", (_req, res) => {
-    res.status(200).send("OK");
-  });
-
+  const app = await createApp();
   const port = env.PORT || 3000;
 
   app.listen(port, () => {
