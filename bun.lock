@@ -119,6 +119,15 @@
         "typescript": "catalog:",
       },
     },
+    "packages/common": {
+      "name": "@hackathon2026/common",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@hackathon2026/config": "workspace:*",
+        "@types/bun": "catalog:",
+        "typescript": "catalog:",
+      },
+    },
     "packages/config": {
       "name": "@hackathon2026/config",
       "version": "0.0.0",
@@ -372,6 +381,8 @@
     "@hackathon2026/api": ["@hackathon2026/api@workspace:packages/api"],
 
     "@hackathon2026/auth": ["@hackathon2026/auth@workspace:packages/auth"],
+
+    "@hackathon2026/common": ["@hackathon2026/common@workspace:packages/common"],
 
     "@hackathon2026/config": ["@hackathon2026/config@workspace:packages/config"],
 
