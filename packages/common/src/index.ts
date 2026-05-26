@@ -21,6 +21,11 @@ export {
 export { logger } from "./logger";
 export { errorHandler } from "./middlewares/error-handler-middleware";
 export { authRateLimiter } from "./middlewares/rate-limit-middleware";
+export {
+  makeCheckAuthMiddleware,
+  PUBLIC_ROUTES,
+} from "./middlewares/check-auth-middleware";
+export type { PublicRoute } from "./middlewares/check-auth-middleware";
 export { validate } from "./middlewares/validation-middleware";
 export type {
   CreateUserParams,
