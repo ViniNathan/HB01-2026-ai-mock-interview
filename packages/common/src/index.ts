@@ -3,6 +3,16 @@ export {
   createBcryptPasswordHasher,
 } from "./adapters/cryptography/bcrypt-password-hasher";
 export {
+  JwtTokenService,
+  createJwtTokenService,
+} from "./adapters/cryptography/jwt-token-service";
+export type { JwtTokenServiceConfig } from "./adapters/cryptography/jwt-token-service";
+export {
+  NodemailerMailerAdapter,
+  createNodemailerMailerAdapter,
+} from "./adapters/mailer/nodemailer-mailer-adapter";
+export type { NodemailerMailerConfig } from "./adapters/mailer/nodemailer-mailer-adapter";
+export {
   HttpError,
   BadRequestError,
   UnauthorizedError,
