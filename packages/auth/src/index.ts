@@ -1,5 +1,4 @@
 // Auth MVC - Implementação manual (Tasks T15-T27)
-// Este arquivo será expandido com service, repository, validations
 
 export type {
   IMailer,
@@ -14,3 +13,14 @@ export {
   type LoginResult,
   type RefreshResult,
 } from "./service/auth-service";
+export {
+  loginSchema,
+  passwordResetSchema,
+  requestPasswordResetSchema,
+  signupSchema,
+  type LoginInput,
+  type PasswordResetInput,
+  type RequestPasswordResetInput,
+  type SignupInput,
+  type SignupOutput,
+} from "./validations";
