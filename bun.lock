@@ -127,6 +127,7 @@
       "dependencies": {
         "@hackathon2026/env": "workspace:*",
         "bcrypt": "catalog:",
+        "express-rate-limit": "catalog:",
         "jsonwebtoken": "catalog:",
         "nodemailer": "catalog:",
         "zod": "catalog:",

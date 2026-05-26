@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@hackathon2026/env": "workspace:*",
+    "express-rate-limit": "catalog:",
     "bcrypt": "catalog:",
     "jsonwebtoken": "catalog:",
     "nodemailer": "catalog:",

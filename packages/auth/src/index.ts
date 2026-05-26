@@ -16,10 +16,12 @@ export {
 export {
   loginSchema,
   passwordResetSchema,
+  refreshSchema,
   requestPasswordResetSchema,
   signupSchema,
   type LoginInput,
   type PasswordResetInput,
+  type RefreshInput,
   type RequestPasswordResetInput,
   type SignupInput,
   type SignupOutput,

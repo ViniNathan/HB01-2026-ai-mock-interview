@@ -1,4 +1,5 @@
 export { loginSchema, type LoginInput } from "./login-schema";
+export { refreshSchema, type RefreshInput } from "./refresh-schema";
 export {
   passwordResetSchema,
   type PasswordResetInput,
