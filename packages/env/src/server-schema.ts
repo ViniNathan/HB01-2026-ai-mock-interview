@@ -1,3 +1,4 @@
+import type { StandardSchemaV1 } from "@t3-oss/env-core";
 import { z } from "zod";
 
 /** Server-side environment variable validators (MVC, SMTP, rate limit). */
@@ -34,7 +35,7 @@ export const serverEnvSchema = z.object(serverEnv);
 export type ServerEnv = z.infer<typeof serverEnvSchema>;
 
 export function formatEnvValidationIssues(
-  issues: readonly { path?: readonly PropertyKey[]; message: string }[],
+  issues: readonly StandardSchemaV1.Issue[],
 ): string {
   const lines = issues.map((issue) => {
     const path = issue.path?.map(String).join(".") || "(root)";

@@ -6,6 +6,8 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "jsx": "react-jsx"
-  }
+    "jsx": "react-jsx",
+    "types": ["bun", "express"]
+  },
+  "include": ["src"]
 }
