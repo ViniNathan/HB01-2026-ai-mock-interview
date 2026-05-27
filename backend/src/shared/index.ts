@@ -17,6 +17,9 @@ export {
   BadRequestError,
   UnauthorizedError,
   NotFoundError,
+  ConflictError,
+  BadGatewayError,
+  ServiceUnavailableError,
 } from "./errors/http-errors";
 export { logger } from "./logger";
 export { errorHandler } from "./middlewares/error-handler-middleware";

@@ -18,6 +18,26 @@ export { Prisma }
 export * as $Enums from './enums'
 export * from './enums';
 /**
+ * Model Resume
+ * 
+ */
+export type Resume = Prisma.ResumeModel
+/**
+ * Model InterviewSession
+ * 
+ */
+export type InterviewSession = Prisma.InterviewSessionModel
+/**
+ * Model InterviewMessage
+ * 
+ */
+export type InterviewMessage = Prisma.InterviewMessageModel
+/**
+ * Model ReviewItem
+ * 
+ */
+export type ReviewItem = Prisma.ReviewItemModel
+/**
  * Model User
  * 
  */

@@ -1,0 +1,94 @@
+enum ResumeStatus {
+  processing
+  ready
+  failed
+}
+
+enum InterviewLevel {
+  entry
+  mid
+  senior
+}
+
+enum MessageRole {
+  human
+  ai
+}
+
+enum ReviewPriority {
+  high
+  medium
+  low
+}
+
+model Resume {
+  id                String       @id @default(uuid())
+  userId            Int
+  name              String
+  pdfUrl            String       @map("pdf_url")
+  structuredSummary Json?        @map("structured_summary")
+  rawText           String?      @map("raw_text") @db.Text
+  status            ResumeStatus @default(processing)
+  errorMessage      String?      @map("error_message") @db.Text
+  createdAt         DateTime     @default(now()) @map("created_at")
+
+  user     User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessions InterviewSession[]
+
+  @@map("resumes")
+  @@index([userId])
+  @@index([userId, status])
+}
+
+model InterviewSession {
+  id         String         @id @default(uuid())
+  userId     Int
+  resumeId   String         @map("resume_id")
+  level      InterviewLevel
+  turnCount  Int            @default(0) @map("turn_count")
+  maxTurns   Int            @map("max_turns")
+  isFinished Boolean        @default(false) @map("is_finished")
+  createdAt  DateTime       @default(now()) @map("created_at")
+
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  resume      Resume             @relation(fields: [resumeId], references: [id])
+  messages    InterviewMessage[]
+  reviewItems ReviewItem[]
+
+  @@map("interview_sessions")
+  @@index([userId])
+  @@index([resumeId])
+}
+
+model InterviewMessage {
+  id        String      @id @default(uuid())
+  sessionId String      @map("session_id")
+  userId    Int         @map("user_id")
+  role      MessageRole
+  content   String      @db.Text
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  session InterviewSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("interview_messages")
+  @@index([sessionId])
+  @@index([userId])
+}
+
+model ReviewItem {
+  id          String         @id @default(uuid())
+  sessionId   String         @map("session_id")
+  userId      Int            @map("user_id")
+  topic       String
+  description String         @db.Text
+  priority    ReviewPriority
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+
+  session InterviewSession @relation(fields: [sessionId], references: [id])
+  user    User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("review_items")
+  @@unique([userId, topic])
+  @@index([userId])
+}

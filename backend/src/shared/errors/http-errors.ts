@@ -25,3 +25,21 @@ export class NotFoundError extends HttpError {
     super(message, 404);
   }
 }
+
+export class ConflictError extends HttpError {
+  constructor(message = "Conflict") {
+    super(message, 409);
+  }
+}
+
+export class BadGatewayError extends HttpError {
+  constructor(message = "Bad Gateway") {
+    super(message, 502);
+  }
+}
+
+export class ServiceUnavailableError extends HttpError {
+  constructor(message = "Service Unavailable") {
+    super(message, 503);
+  }
+}

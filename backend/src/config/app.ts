@@ -4,10 +4,13 @@ import { errorHandler } from "@/shared";
 import cors from "cors";
 import express, { type Express } from "express";
 
+import { setup as setupCheckpointer } from "@/infrastructure/ai/checkpoint/postgres-checkpointer";
 import { makeCheckAuth } from "@/factories/auth/check-auth-factory";
 import { setupRoutes } from "./routes";
 
 export async function createApp(): Promise<Express> {
+  await setupCheckpointer();
+
   const app = express();
 
   app.use(

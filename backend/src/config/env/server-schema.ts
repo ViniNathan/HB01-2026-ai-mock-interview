@@ -30,9 +30,33 @@ export const serverEnv = {
   // Rate Limiting
   RATE_LIMIT_WINDOW_MS: z.coerce.number().default(900000), // 15 minutes
   RATE_LIMIT_MAX: z.coerce.number().default(20),
+
+  // OpenAI (mock interview)
+  OPENAI_API_KEY: z.string().min(1),
+  OPENAI_MODEL_INTERVIEW: z.string().default("gpt-5"),
+  OPENAI_MODEL_EXTRACTION: z.string().default("gpt-5-nano"),
+  OPENAI_MODEL_REVIEW: z.string().default("gpt-5-nano"),
+
+  // Cloudflare R2 (object storage)
+  R2_ACCOUNT_ID: z.string().min(1),
+  R2_ACCESS_KEY_ID: z.string().min(1),
+  R2_SECRET_ACCESS_KEY: z.string().min(1),
+  R2_BUCKET_NAME: z.string().min(1),
+  R2_ENDPOINT: z.string().url().optional(),
+
+  // Redis (BullMQ)
+  REDIS_URL: z.string().default("redis://localhost:6379"),
+
+  // Résumé uploads
+  RESUME_MAX_BYTES: z.coerce.number().default(5_242_880), // 5 MB
 } as const;
 
-export const serverEnvSchema = z.object(serverEnv);
+export const serverEnvSchema = z.object(serverEnv).transform((data) => ({
+  ...data,
+  R2_ENDPOINT:
+    data.R2_ENDPOINT ??
+    `https://${data.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+}));
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;
 

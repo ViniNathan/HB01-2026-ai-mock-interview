@@ -17,6 +17,11 @@ const validEnv = {
   SMTP_USER: "user@example.com",
   SMTP_PASS: "secret",
   MAIL_FROM: "user@example.com",
+  OPENAI_API_KEY: "sk-test-openai-api-key",
+  R2_ACCOUNT_ID: "test-account-id",
+  R2_ACCESS_KEY_ID: "test-access-key",
+  R2_SECRET_ACCESS_KEY: "test-secret-key",
+  R2_BUCKET_NAME: "test-bucket",
 };
 
 describe("serverEnvSchema", () => {
@@ -31,6 +36,26 @@ describe("serverEnvSchema", () => {
     expect(result.data.SMTP_PORT).toBe(587);
     expect(result.data.RATE_LIMIT_WINDOW_MS).toBe(900000);
     expect(result.data.RATE_LIMIT_MAX).toBe(20);
+    expect(result.data.OPENAI_MODEL_INTERVIEW).toBe("gpt-5");
+    expect(result.data.OPENAI_MODEL_EXTRACTION).toBe("gpt-5-nano");
+    expect(result.data.OPENAI_MODEL_REVIEW).toBe("gpt-5-nano");
+    expect(result.data.REDIS_URL).toBe("redis://localhost:6379");
+    expect(result.data.RESUME_MAX_BYTES).toBe(5_242_880);
+    expect(result.data.R2_ENDPOINT).toBe(
+      "https://test-account-id.r2.cloudflarestorage.com",
+    );
+  });
+
+  it("uses explicit R2_ENDPOINT when provided", () => {
+    const result = serverEnvSchema.safeParse({
+      ...validEnv,
+      R2_ENDPOINT: "https://custom.r2.example.com",
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+
+    expect(result.data.R2_ENDPOINT).toBe("https://custom.r2.example.com");
   });
 
   it("rejects invalid environment with clear field errors", () => {
