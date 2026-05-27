@@ -225,6 +225,9 @@ export type UserWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
+  resumes?: Prisma.ResumeListRelationFilter
+  interviewSessions?: Prisma.InterviewSessionListRelationFilter
+  reviewItems?: Prisma.ReviewItemListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -235,6 +238,9 @@ export type UserOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   refreshTokens?: Prisma.RefreshTokenOrderByRelationAggregateInput
+  resumes?: Prisma.ResumeOrderByRelationAggregateInput
+  interviewSessions?: Prisma.InterviewSessionOrderByRelationAggregateInput
+  reviewItems?: Prisma.ReviewItemOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -248,6 +254,9 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   refreshTokens?: Prisma.RefreshTokenListRelationFilter
+  resumes?: Prisma.ResumeListRelationFilter
+  interviewSessions?: Prisma.InterviewSessionListRelationFilter
+  reviewItems?: Prisma.ReviewItemListRelationFilter
 }, "id" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -283,6 +292,9 @@ export type UserCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  resumes?: Prisma.ResumeCreateNestedManyWithoutUserInput
+  interviewSessions?: Prisma.InterviewSessionCreateNestedManyWithoutUserInput
+  reviewItems?: Prisma.ReviewItemCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -293,6 +305,9 @@ export type UserUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  resumes?: Prisma.ResumeUncheckedCreateNestedManyWithoutUserInput
+  interviewSessions?: Prisma.InterviewSessionUncheckedCreateNestedManyWithoutUserInput
+  reviewItems?: Prisma.ReviewItemUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -302,6 +317,9 @@ export type UserUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  resumes?: Prisma.ResumeUpdateManyWithoutUserNestedInput
+  interviewSessions?: Prisma.InterviewSessionUpdateManyWithoutUserNestedInput
+  reviewItems?: Prisma.ReviewItemUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -312,6 +330,9 @@ export type UserUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  resumes?: Prisma.ResumeUncheckedUpdateManyWithoutUserNestedInput
+  interviewSessions?: Prisma.InterviewSessionUncheckedUpdateManyWithoutUserNestedInput
+  reviewItems?: Prisma.ReviewItemUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -338,6 +359,11 @@ export type UserUncheckedUpdateManyInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type UserScalarRelationFilter = {
+  is?: Prisma.UserWhereInput
+  isNot?: Prisma.UserWhereInput
 }
 
 export type UserCountOrderByAggregateInput = {
@@ -375,25 +401,46 @@ export type UserSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
 }
 
-export type UserScalarRelationFilter = {
-  is?: Prisma.UserWhereInput
-  isNot?: Prisma.UserWhereInput
+export type UserCreateNestedOneWithoutResumesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutResumesInput, Prisma.UserUncheckedCreateWithoutResumesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutResumesInput
+  connect?: Prisma.UserWhereUniqueInput
 }
 
-export type StringFieldUpdateOperationsInput = {
-  set?: string
+export type UserUpdateOneRequiredWithoutResumesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutResumesInput, Prisma.UserUncheckedCreateWithoutResumesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutResumesInput
+  upsert?: Prisma.UserUpsertWithoutResumesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutResumesInput, Prisma.UserUpdateWithoutResumesInput>, Prisma.UserUncheckedUpdateWithoutResumesInput>
 }
 
-export type DateTimeFieldUpdateOperationsInput = {
-  set?: Date | string
+export type UserCreateNestedOneWithoutInterviewSessionsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutInterviewSessionsInput, Prisma.UserUncheckedCreateWithoutInterviewSessionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutInterviewSessionsInput
+  connect?: Prisma.UserWhereUniqueInput
 }
 
-export type IntFieldUpdateOperationsInput = {
-  set?: number
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
+export type UserUpdateOneRequiredWithoutInterviewSessionsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutInterviewSessionsInput, Prisma.UserUncheckedCreateWithoutInterviewSessionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutInterviewSessionsInput
+  upsert?: Prisma.UserUpsertWithoutInterviewSessionsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutInterviewSessionsInput, Prisma.UserUpdateWithoutInterviewSessionsInput>, Prisma.UserUncheckedUpdateWithoutInterviewSessionsInput>
+}
+
+export type UserCreateNestedOneWithoutReviewItemsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewItemsInput, Prisma.UserUncheckedCreateWithoutReviewItemsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewItemsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutReviewItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutReviewItemsInput, Prisma.UserUncheckedCreateWithoutReviewItemsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutReviewItemsInput
+  upsert?: Prisma.UserUpsertWithoutReviewItemsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReviewItemsInput, Prisma.UserUpdateWithoutReviewItemsInput>, Prisma.UserUncheckedUpdateWithoutReviewItemsInput>
 }
 
 export type UserCreateNestedOneWithoutRefreshTokensInput = {
@@ -410,12 +457,201 @@ export type UserUpdateOneRequiredWithoutRefreshTokensNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutRefreshTokensInput, Prisma.UserUpdateWithoutRefreshTokensInput>, Prisma.UserUncheckedUpdateWithoutRefreshTokensInput>
 }
 
+export type UserCreateWithoutResumesInput = {
+  name: string
+  email: string
+  password: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  interviewSessions?: Prisma.InterviewSessionCreateNestedManyWithoutUserInput
+  reviewItems?: Prisma.ReviewItemCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutResumesInput = {
+  id?: number
+  name: string
+  email: string
+  password: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  interviewSessions?: Prisma.InterviewSessionUncheckedCreateNestedManyWithoutUserInput
+  reviewItems?: Prisma.ReviewItemUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutResumesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutResumesInput, Prisma.UserUncheckedCreateWithoutResumesInput>
+}
+
+export type UserUpsertWithoutResumesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutResumesInput, Prisma.UserUncheckedUpdateWithoutResumesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutResumesInput, Prisma.UserUncheckedCreateWithoutResumesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutResumesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutResumesInput, Prisma.UserUncheckedUpdateWithoutResumesInput>
+}
+
+export type UserUpdateWithoutResumesInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  interviewSessions?: Prisma.InterviewSessionUpdateManyWithoutUserNestedInput
+  reviewItems?: Prisma.ReviewItemUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutResumesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  interviewSessions?: Prisma.InterviewSessionUncheckedUpdateManyWithoutUserNestedInput
+  reviewItems?: Prisma.ReviewItemUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutInterviewSessionsInput = {
+  name: string
+  email: string
+  password: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  resumes?: Prisma.ResumeCreateNestedManyWithoutUserInput
+  reviewItems?: Prisma.ReviewItemCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutInterviewSessionsInput = {
+  id?: number
+  name: string
+  email: string
+  password: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  resumes?: Prisma.ResumeUncheckedCreateNestedManyWithoutUserInput
+  reviewItems?: Prisma.ReviewItemUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutInterviewSessionsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutInterviewSessionsInput, Prisma.UserUncheckedCreateWithoutInterviewSessionsInput>
+}
+
+export type UserUpsertWithoutInterviewSessionsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutInterviewSessionsInput, Prisma.UserUncheckedUpdateWithoutInterviewSessionsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutInterviewSessionsInput, Prisma.UserUncheckedCreateWithoutInterviewSessionsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutInterviewSessionsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutInterviewSessionsInput, Prisma.UserUncheckedUpdateWithoutInterviewSessionsInput>
+}
+
+export type UserUpdateWithoutInterviewSessionsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  resumes?: Prisma.ResumeUpdateManyWithoutUserNestedInput
+  reviewItems?: Prisma.ReviewItemUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutInterviewSessionsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  resumes?: Prisma.ResumeUncheckedUpdateManyWithoutUserNestedInput
+  reviewItems?: Prisma.ReviewItemUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutReviewItemsInput = {
+  name: string
+  email: string
+  password: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  refreshTokens?: Prisma.RefreshTokenCreateNestedManyWithoutUserInput
+  resumes?: Prisma.ResumeCreateNestedManyWithoutUserInput
+  interviewSessions?: Prisma.InterviewSessionCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutReviewItemsInput = {
+  id?: number
+  name: string
+  email: string
+  password: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  refreshTokens?: Prisma.RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+  resumes?: Prisma.ResumeUncheckedCreateNestedManyWithoutUserInput
+  interviewSessions?: Prisma.InterviewSessionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutReviewItemsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutReviewItemsInput, Prisma.UserUncheckedCreateWithoutReviewItemsInput>
+}
+
+export type UserUpsertWithoutReviewItemsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutReviewItemsInput, Prisma.UserUncheckedUpdateWithoutReviewItemsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutReviewItemsInput, Prisma.UserUncheckedCreateWithoutReviewItemsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutReviewItemsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutReviewItemsInput, Prisma.UserUncheckedUpdateWithoutReviewItemsInput>
+}
+
+export type UserUpdateWithoutReviewItemsInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  refreshTokens?: Prisma.RefreshTokenUpdateManyWithoutUserNestedInput
+  resumes?: Prisma.ResumeUpdateManyWithoutUserNestedInput
+  interviewSessions?: Prisma.InterviewSessionUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutReviewItemsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  refreshTokens?: Prisma.RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+  resumes?: Prisma.ResumeUncheckedUpdateManyWithoutUserNestedInput
+  interviewSessions?: Prisma.InterviewSessionUncheckedUpdateManyWithoutUserNestedInput
+}
+
 export type UserCreateWithoutRefreshTokensInput = {
   name: string
   email: string
   password: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  resumes?: Prisma.ResumeCreateNestedManyWithoutUserInput
+  interviewSessions?: Prisma.InterviewSessionCreateNestedManyWithoutUserInput
+  reviewItems?: Prisma.ReviewItemCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRefreshTokensInput = {
@@ -425,6 +661,9 @@ export type UserUncheckedCreateWithoutRefreshTokensInput = {
   password: string
   createdAt?: Date | string
   updatedAt?: Date | string
+  resumes?: Prisma.ResumeUncheckedCreateNestedManyWithoutUserInput
+  interviewSessions?: Prisma.InterviewSessionUncheckedCreateNestedManyWithoutUserInput
+  reviewItems?: Prisma.ReviewItemUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRefreshTokensInput = {
@@ -449,6 +688,9 @@ export type UserUpdateWithoutRefreshTokensInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resumes?: Prisma.ResumeUpdateManyWithoutUserNestedInput
+  interviewSessions?: Prisma.InterviewSessionUpdateManyWithoutUserNestedInput
+  reviewItems?: Prisma.ReviewItemUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRefreshTokensInput = {
@@ -458,6 +700,9 @@ export type UserUncheckedUpdateWithoutRefreshTokensInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  resumes?: Prisma.ResumeUncheckedUpdateManyWithoutUserNestedInput
+  interviewSessions?: Prisma.InterviewSessionUncheckedUpdateManyWithoutUserNestedInput
+  reviewItems?: Prisma.ReviewItemUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -467,10 +712,16 @@ export type UserUncheckedUpdateWithoutRefreshTokensInput = {
 
 export type UserCountOutputType = {
   refreshTokens: number
+  resumes: number
+  interviewSessions: number
+  reviewItems: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   refreshTokens?: boolean | UserCountOutputTypeCountRefreshTokensArgs
+  resumes?: boolean | UserCountOutputTypeCountResumesArgs
+  interviewSessions?: boolean | UserCountOutputTypeCountInterviewSessionsArgs
+  reviewItems?: boolean | UserCountOutputTypeCountReviewItemsArgs
 }
 
 /**
@@ -490,6 +741,27 @@ export type UserCountOutputTypeCountRefreshTokensArgs<ExtArgs extends runtime.Ty
   where?: Prisma.RefreshTokenWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountResumesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ResumeWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountInterviewSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InterviewSessionWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountReviewItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ReviewItemWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -499,6 +771,9 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdAt?: boolean
   updatedAt?: boolean
   refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
+  resumes?: boolean | Prisma.User$resumesArgs<ExtArgs>
+  interviewSessions?: boolean | Prisma.User$interviewSessionsArgs<ExtArgs>
+  reviewItems?: boolean | Prisma.User$reviewItemsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -532,6 +807,9 @@ export type UserSelectScalar = {
 export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   refreshTokens?: boolean | Prisma.User$refreshTokensArgs<ExtArgs>
+  resumes?: boolean | Prisma.User$resumesArgs<ExtArgs>
+  interviewSessions?: boolean | Prisma.User$interviewSessionsArgs<ExtArgs>
+  reviewItems?: boolean | Prisma.User$reviewItemsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -541,6 +819,9 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   name: "User"
   objects: {
     refreshTokens: Prisma.$RefreshTokenPayload<ExtArgs>[]
+    resumes: Prisma.$ResumePayload<ExtArgs>[]
+    interviewSessions: Prisma.$InterviewSessionPayload<ExtArgs>[]
+    reviewItems: Prisma.$ReviewItemPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -944,6 +1225,9 @@ readonly fields: UserFieldRefs;
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   refreshTokens<T extends Prisma.User$refreshTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$refreshTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefreshTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  resumes<T extends Prisma.User$resumesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$resumesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ResumePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  interviewSessions<T extends Prisma.User$interviewSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$interviewSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InterviewSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reviewItems<T extends Prisma.User$reviewItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1393,6 +1677,78 @@ export type User$refreshTokensArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.RefreshTokenScalarFieldEnum | Prisma.RefreshTokenScalarFieldEnum[]
+}
+
+/**
+ * User.resumes
+ */
+export type User$resumesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Resume
+   */
+  select?: Prisma.ResumeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Resume
+   */
+  omit?: Prisma.ResumeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ResumeInclude<ExtArgs> | null
+  where?: Prisma.ResumeWhereInput
+  orderBy?: Prisma.ResumeOrderByWithRelationInput | Prisma.ResumeOrderByWithRelationInput[]
+  cursor?: Prisma.ResumeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ResumeScalarFieldEnum | Prisma.ResumeScalarFieldEnum[]
+}
+
+/**
+ * User.interviewSessions
+ */
+export type User$interviewSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the InterviewSession
+   */
+  select?: Prisma.InterviewSessionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the InterviewSession
+   */
+  omit?: Prisma.InterviewSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InterviewSessionInclude<ExtArgs> | null
+  where?: Prisma.InterviewSessionWhereInput
+  orderBy?: Prisma.InterviewSessionOrderByWithRelationInput | Prisma.InterviewSessionOrderByWithRelationInput[]
+  cursor?: Prisma.InterviewSessionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InterviewSessionScalarFieldEnum | Prisma.InterviewSessionScalarFieldEnum[]
+}
+
+/**
+ * User.reviewItems
+ */
+export type User$reviewItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ReviewItem
+   */
+  select?: Prisma.ReviewItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ReviewItem
+   */
+  omit?: Prisma.ReviewItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ReviewItemInclude<ExtArgs> | null
+  where?: Prisma.ReviewItemWhereInput
+  orderBy?: Prisma.ReviewItemOrderByWithRelationInput | Prisma.ReviewItemOrderByWithRelationInput[]
+  cursor?: Prisma.ReviewItemWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ReviewItemScalarFieldEnum | Prisma.ReviewItemScalarFieldEnum[]
 }
 
 /**

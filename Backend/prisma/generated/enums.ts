@@ -9,7 +9,36 @@
 * 🟢 You can import this file directly.
 */
 
+export const ResumeStatus = {
+  processing: 'processing',
+  ready: 'ready',
+  failed: 'failed'
+} as const
+
+export type ResumeStatus = (typeof ResumeStatus)[keyof typeof ResumeStatus]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const InterviewLevel = {
+  entry: 'entry',
+  mid: 'mid',
+  senior: 'senior'
+} as const
+
+export type InterviewLevel = (typeof InterviewLevel)[keyof typeof InterviewLevel]
+
+
+export const MessageRole = {
+  human: 'human',
+  ai: 'ai'
+} as const
+
+export type MessageRole = (typeof MessageRole)[keyof typeof MessageRole]
+
+
+export const ReviewPriority = {
+  high: 'high',
+  medium: 'medium',
+  low: 'low'
+} as const
+
+export type ReviewPriority = (typeof ReviewPriority)[keyof typeof ReviewPriority]
