@@ -1,4 +1,5 @@
 import { env } from "@/config/env";
+import { setupSwagger } from "@/docs/setup-swagger";
 import { errorHandler } from "@/shared";
 import cors from "cors";
 import express, { type Express } from "express";
@@ -19,6 +20,7 @@ export async function createApp(): Promise<Express> {
   );
 
   app.use(express.json());
+  setupSwagger(app);
   app.use(makeCheckAuth());
 
   await setupRoutes(app);
