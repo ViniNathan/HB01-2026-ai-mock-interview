@@ -30,6 +30,10 @@ export const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
       err instanceof Error ? err.message : "Internal Server Error";
     const stack = err instanceof Error ? err.stack : undefined;
     logger.error(logMessage, { stack });
+
+    if (process.env.NODE_ENV !== "production") {
+      console.error(err);
+    }
   }
 
   res.status(statusCode).json({ message });
