@@ -16,6 +16,8 @@ function normalizeTopic(topic: string): string {
   return topic.toLowerCase();
 }
 
+const TOPIC_SIMILARITY_THRESHOLD = 0.7;
+
 export class ReviewRepository {
   async listByUserId(userId: number): Promise<ReviewItem[]> {
     return prisma.reviewItem.findMany({
@@ -34,6 +36,24 @@ export class ReviewRepository {
         topic: normalizeTopic(topic),
       },
     });
+  }
+
+  async findSimilarByUserIdAndTopic(
+    userId: number,
+    topic: string,
+    threshold: number = TOPIC_SIMILARITY_THRESHOLD,
+  ): Promise<ReviewItem | null> {
+    const normalizedTopic = normalizeTopic(topic);
+    const matches = await prisma.$queryRaw<ReviewItem[]>`
+      SELECT *
+      FROM "review_items"
+      WHERE "user_id" = ${userId}
+        AND similarity("topic", ${normalizedTopic}) >= ${threshold}
+      ORDER BY similarity("topic", ${normalizedTopic}) DESC
+      LIMIT 1
+    `;
+
+    return matches[0] ?? null;
   }
 
   async upsert(params: UpsertReviewItemParams): Promise<ReviewItem> {

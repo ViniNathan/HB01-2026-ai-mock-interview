@@ -48,7 +48,11 @@ export class ReviewMergeService {
         await this.reviewRepository.findByUserIdAndTopicCaseInsensitive(
           userId,
           item.topic,
-        );
+        ) ??
+        (await this.reviewRepository.findSimilarByUserIdAndTopic(
+          userId,
+          item.topic,
+        ));
 
       if (!existing) {
         await this.reviewRepository.upsert({

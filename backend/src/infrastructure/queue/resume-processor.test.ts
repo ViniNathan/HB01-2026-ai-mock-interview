@@ -10,6 +10,7 @@ const sampleResume = {
   userId: 42,
   name: "Jane Doe CV.pdf",
   pdfUrl: "users/42/resumes/resume-uuid.pdf",
+  storageKey: "users/42/resumes/resume-uuid.pdf",
   structuredSummary: null,
   rawText: null,
   status: ResumeStatus.processing,
@@ -82,7 +83,7 @@ describe("ResumeProcessor", () => {
 
     await processor.process("resume-uuid");
 
-    expect(objectStorage.get).toHaveBeenCalledWith(sampleResume.pdfUrl);
+    expect(objectStorage.get).toHaveBeenCalledWith(sampleResume.storageKey);
     expect(extractText).toHaveBeenCalledWith(Buffer.from("pdf-bytes"));
     expect(extractionModel.withStructuredOutput).toHaveBeenCalled();
     expect(structuredModel.invoke).toHaveBeenCalled();

@@ -11,6 +11,7 @@ describe("ReviewMergeService", () => {
   beforeEach(() => {
     reviewRepository = {
       findByUserIdAndTopicCaseInsensitive: vi.fn(),
+      findSimilarByUserIdAndTopic: vi.fn(),
       upsert: vi.fn(),
     } as unknown as ReviewRepository;
 
@@ -21,6 +22,9 @@ describe("ReviewMergeService", () => {
     vi.mocked(
       reviewRepository.findByUserIdAndTopicCaseInsensitive,
     ).mockResolvedValue(null);
+    vi.mocked(reviewRepository.findSimilarByUserIdAndTopic).mockResolvedValue(
+      null,
+    );
 
     await service.upsertItems(1, "session-1", [
       {
@@ -153,6 +157,40 @@ describe("ReviewMergeService", () => {
       },
     ]);
 
+    expect(reviewRepository.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        priority: "high",
+      }),
+    );
+  });
+
+  it("falls back to similarity lookup when exact normalized topic is missing", async () => {
+    vi.mocked(
+      reviewRepository.findByUserIdAndTopicCaseInsensitive,
+    ).mockResolvedValue(null);
+    vi.mocked(reviewRepository.findSimilarByUserIdAndTopic).mockResolvedValue({
+      id: "item-1",
+      userId: 1,
+      sessionId: "old-session",
+      topic: "distributed systems",
+      description: "Old",
+      priority: "medium",
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    await service.upsertItems(1, "session-1", [
+      {
+        topic: "Distributed System Design",
+        description: "Clarify trade-offs",
+        priority: "high",
+      },
+    ]);
+
+    expect(reviewRepository.findSimilarByUserIdAndTopic).toHaveBeenCalledWith(
+      1,
+      "Distributed System Design",
+    );
     expect(reviewRepository.upsert).toHaveBeenCalledWith(
       expect.objectContaining({
         priority: "high",

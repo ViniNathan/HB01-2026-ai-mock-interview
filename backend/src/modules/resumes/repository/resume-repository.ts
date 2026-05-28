@@ -8,6 +8,7 @@ export class ResumeRepository {
     userId: number,
     name: string,
     pdfUrl: string,
+    storageKey: string,
     id?: string,
   ): Promise<Resume> {
     return prisma.resume.create({
@@ -16,6 +17,7 @@ export class ResumeRepository {
         userId,
         name,
         pdfUrl,
+        storageKey,
         status: ResumeStatus.processing,
       },
     });

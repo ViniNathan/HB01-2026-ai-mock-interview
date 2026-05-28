@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockPrisma = vi.hoisted(() => ({
+  $queryRaw: vi.fn(),
   reviewItem: {
     findMany: vi.fn(),
     findFirst: vi.fn(),
@@ -94,6 +95,18 @@ describe("ReviewRepository", () => {
         priority: params.priority,
       },
     });
+    expect(result).toEqual(sampleReview);
+  });
+
+  it("findSimilarByUserIdAndTopic returns the closest trigram match", async () => {
+    mockPrisma.$queryRaw.mockResolvedValue([sampleReview]);
+
+    const result = await repository.findSimilarByUserIdAndTopic(
+      sampleReview.userId,
+      "distributed systems",
+    );
+
+    expect(mockPrisma.$queryRaw).toHaveBeenCalledOnce();
     expect(result).toEqual(sampleReview);
   });
 });

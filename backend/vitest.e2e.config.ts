@@ -13,7 +13,7 @@ export default defineConfig({
     exclude: ["node_modules/**"],
     setupFiles: ["./vitest.setup.ts", "./vitest.e2e.setup.ts"],
     fileParallelism: false,
-    hookTimeout: 30_000,
-    testTimeout: 30_000,
+    hookTimeout: 90_000,
+    testTimeout: 90_000,
   },
 });

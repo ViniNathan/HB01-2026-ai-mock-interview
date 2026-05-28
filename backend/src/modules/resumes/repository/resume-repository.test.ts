@@ -21,6 +21,7 @@ const sampleResume = {
   userId: 42,
   name: "Jane Doe CV.pdf",
   pdfUrl: "users/42/resumes/resume-uuid.pdf",
+  storageKey: "users/42/resumes/resume-uuid.pdf",
   structuredSummary: null,
   rawText: null,
   status: ResumeStatus.processing,
@@ -59,6 +60,7 @@ describe("ResumeRepository", () => {
       sampleResume.userId,
       sampleResume.name,
       sampleResume.pdfUrl,
+      sampleResume.storageKey,
     );
 
     expect(mockPrisma.resume.create).toHaveBeenCalledWith({
@@ -66,6 +68,7 @@ describe("ResumeRepository", () => {
         userId: sampleResume.userId,
         name: sampleResume.name,
         pdfUrl: sampleResume.pdfUrl,
+        storageKey: sampleResume.storageKey,
         status: ResumeStatus.processing,
       },
     });
@@ -79,6 +82,7 @@ describe("ResumeRepository", () => {
       sampleResume.userId,
       sampleResume.name,
       sampleResume.pdfUrl,
+      sampleResume.storageKey,
       sampleResume.id,
     );
 
@@ -88,6 +92,7 @@ describe("ResumeRepository", () => {
         userId: sampleResume.userId,
         name: sampleResume.name,
         pdfUrl: sampleResume.pdfUrl,
+        storageKey: sampleResume.storageKey,
         status: ResumeStatus.processing,
       },
     });

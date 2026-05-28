@@ -598,8 +598,8 @@ finished (isFinished)
 
 ## Specs de origem (backend)
 
-- [AI Mock Interview](../.specs/features/ai-mock-interview/spec.md)
-- [Interview Closing Feedback](../.specs/features/interview-closing-feedback/spec.md)
+- [AI Mock Interview spec](../../.specs/features/ai-mock-interview/spec.md)
+- [AI Mock Interview design](../../.specs/features/ai-mock-interview/design.md)
 
 ---
 
