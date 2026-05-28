@@ -80,6 +80,7 @@ export const ResumeScalarFieldEnum = {
   userId: 'userId',
   name: 'name',
   pdfUrl: 'pdfUrl',
+  storageKey: 'storageKey',
   structuredSummary: 'structuredSummary',
   rawText: 'rawText',
   status: 'status',

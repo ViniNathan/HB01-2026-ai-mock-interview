@@ -26,6 +26,7 @@ model Resume {
   userId            Int
   name              String
   pdfUrl            String       @map("pdf_url")
+  storageKey        String       @map("storage_key")
   structuredSummary Json?        @map("structured_summary")
   rawText           String?      @map("raw_text") @db.Text
   status            ResumeStatus @default(processing)
@@ -38,6 +39,7 @@ model Resume {
   @@map("resumes")
   @@index([userId])
   @@index([userId, status])
+  @@index([storageKey])
 }
 
 model InterviewSession {

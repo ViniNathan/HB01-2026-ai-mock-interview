@@ -41,17 +41,19 @@ export class ResumeService {
     this.validatePdfFile(file);
 
     const resumeId = randomUUID();
-    const pdfKey = `users/${userId}/resumes/${resumeId}.pdf`;
+    const storageKey = `users/${userId}/resumes/${resumeId}.pdf`;
+    const pdfUrl = storageKey;
 
     const resume = await this.resumeRepository.createProcessing(
       userId,
       file.originalname,
-      pdfKey,
+      pdfUrl,
+      storageKey,
       resumeId,
     );
 
     try {
-      await this.objectStorage.put(pdfKey, file.buffer, PDF_MIME_TYPE);
+      await this.objectStorage.put(storageKey, file.buffer, PDF_MIME_TYPE);
     } catch {
       await this.resumeRepository.updateFailed(
         resume.id,

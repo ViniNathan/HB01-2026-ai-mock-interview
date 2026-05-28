@@ -15,6 +15,7 @@ const sampleResume = {
   userId: 42,
   name: "Jane Doe CV.pdf",
   pdfUrl: "users/42/resumes/resume-uuid.pdf",
+  storageKey: "users/42/resumes/resume-uuid.pdf",
   structuredSummary: null,
   rawText: null,
   status: ResumeStatus.processing,
@@ -97,8 +98,8 @@ describe("ResumeProcessor", () => {
 
     const result = await processor.process("resume-uuid");
 
+    expect(objectStorage.get).toHaveBeenCalledWith(sampleResume.storageKey);
     expect(result).toEqual({ status: "ready", resumeId: "resume-uuid" });
-    expect(objectStorage.get).toHaveBeenCalledWith(sampleResume.pdfUrl);
     expect(extractText).toHaveBeenCalledWith(Buffer.from("pdf-bytes"));
     expect(extractionModel.withStructuredOutput).toHaveBeenCalledWith(
       structuredSummarySchema,

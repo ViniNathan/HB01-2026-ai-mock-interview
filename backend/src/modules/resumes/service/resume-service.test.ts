@@ -26,6 +26,7 @@ const sampleResume = {
   userId: 42,
   name: "Jane Doe CV.pdf",
   pdfUrl: "users/42/resumes/resume-uuid.pdf",
+  storageKey: "users/42/resumes/resume-uuid.pdf",
   structuredSummary: null,
   rawText: null,
   status: ResumeStatus.processing,
@@ -91,6 +92,7 @@ describe("ResumeService", () => {
       expect(resumeRepository.createProcessing).toHaveBeenCalledWith(
         42,
         "resume.pdf",
+        "users/42/resumes/resume-uuid.pdf",
         "users/42/resumes/resume-uuid.pdf",
         "resume-uuid",
       );
@@ -187,6 +189,7 @@ describe("ResumeService", () => {
         },
         rawText: "secret text",
         pdfUrl: "users/42/resumes/resume-uuid.pdf",
+        storageKey: "users/42/resumes/resume-uuid.pdf",
         errorMessage: "should not leak",
       };
 

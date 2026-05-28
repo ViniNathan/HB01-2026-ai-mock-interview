@@ -34,7 +34,7 @@ export class ResumeProcessor {
     }
 
     try {
-      const pdfBuffer = await objectStorage.get(resume.pdfUrl);
+      const pdfBuffer = await objectStorage.get(resume.storageKey);
       const rawText = await extractText(pdfBuffer);
 
       if (!rawText.trim()) {

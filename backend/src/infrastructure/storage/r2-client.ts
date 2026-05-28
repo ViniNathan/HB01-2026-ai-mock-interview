@@ -4,11 +4,9 @@ import {
   PutObjectCommand,
   S3Client,
 } from "@aws-sdk/client-s3";
-import { createRequire } from "node:module";
 
+import { env } from "@/config/env";
 import type { IObjectStorage } from "@/modules/resumes/protocols/object-storage";
-
-const require = createRequire(import.meta.url);
 
 export type R2ObjectStorageConfig = {
   bucketName: string;
@@ -61,25 +59,16 @@ export class R2ObjectStorage implements IObjectStorage {
   }
 }
 
-type EnvServerR2Module = {
-  env: {
-    R2_ENDPOINT: string;
-    R2_ACCESS_KEY_ID: string;
-    R2_SECRET_ACCESS_KEY: string;
-    R2_BUCKET_NAME: string;
-  };
-};
-
 function readEnvR2Config(): R2ObjectStorageConfig & {
   endpoint: string;
   accessKeyId: string;
   secretAccessKey: string;
 } {
-  const { env } = require("@/config/env") as EnvServerR2Module;
-
   return {
     bucketName: env.R2_BUCKET_NAME,
-    endpoint: env.R2_ENDPOINT,
+    endpoint:
+      env.R2_ENDPOINT ??
+      `https://${env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
     accessKeyId: env.R2_ACCESS_KEY_ID,
     secretAccessKey: env.R2_SECRET_ACCESS_KEY,
   };
