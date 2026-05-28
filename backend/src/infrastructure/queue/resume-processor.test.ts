@@ -80,8 +80,9 @@ describe("ResumeProcessor", () => {
       rawText: "Jane Doe\nSoftware Engineer",
     });
 
-    await processor.process("resume-uuid");
+    const result = await processor.process("resume-uuid");
 
+    expect(result).toEqual({ status: "ready", resumeId: "resume-uuid" });
     expect(objectStorage.get).toHaveBeenCalledWith(sampleResume.pdfUrl);
     expect(extractText).toHaveBeenCalledWith(Buffer.from("pdf-bytes"));
     expect(extractionModel.withStructuredOutput).toHaveBeenCalled();
@@ -98,8 +99,14 @@ describe("ResumeProcessor", () => {
     vi.mocked(resumeRepository.findById).mockResolvedValue(sampleResume);
     extractText.mockRejectedValue(new Error("PDF parse error"));
 
-    await processor.process("resume-uuid");
+    const result = await processor.process("resume-uuid");
 
+    expect(result).toEqual({
+      status: "failed",
+      resumeId: "resume-uuid",
+      error: "PDF parse error",
+      cause: expect.any(Error),
+    });
     expect(resumeRepository.updateFailed).toHaveBeenCalledWith(
       "resume-uuid",
       "PDF parse error",
@@ -110,8 +117,13 @@ describe("ResumeProcessor", () => {
   it("skips processing when resume is not found", async () => {
     vi.mocked(resumeRepository.findById).mockResolvedValue(null);
 
-    await processor.process("missing-id");
+    const result = await processor.process("missing-id");
 
+    expect(result).toEqual({
+      status: "skipped",
+      resumeId: "missing-id",
+      reason: "not_found",
+    });
     expect(objectStorage.get).not.toHaveBeenCalled();
     expect(resumeRepository.updateReady).not.toHaveBeenCalled();
     expect(resumeRepository.updateFailed).not.toHaveBeenCalled();
