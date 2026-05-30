@@ -31,10 +31,7 @@ export default function SignUpForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
+    if (password !== confirmPassword) return;
     setIsSubmitting(true);
     try {
       await signup(name, email, password, confirmPassword);
