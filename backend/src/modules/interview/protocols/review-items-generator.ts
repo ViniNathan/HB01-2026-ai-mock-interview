@@ -1,0 +1,15 @@
+import type { ReviewItemsGeneratorOutput } from "@/modules/interview/validations/interview-schemas";
+import type { StructuredSummary } from "@/modules/resumes/validations/resume-schemas";
+
+export type ReviewItemsGeneratorParams = {
+  userId: number;
+  sessionId: string;
+  transcript: string;
+  structuredSummary: StructuredSummary;
+};
+
+export interface IReviewItemsGenerator {
+  generate(
+    params: ReviewItemsGeneratorParams,
+  ): Promise<ReviewItemsGeneratorOutput>;
+}

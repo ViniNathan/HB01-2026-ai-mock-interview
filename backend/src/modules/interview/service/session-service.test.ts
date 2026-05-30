@@ -1,0 +1,355 @@
+import { beforeEach, describe, expect, it } from "vitest";
+
+import { BadRequestError, NotFoundError } from "@/shared";
+import { ResumeStatus } from "../../../../prisma/generated/client";
+import type { Resume } from "../../../../prisma/generated/client";
+import type { ResumeRepository } from "@/modules/resumes/repository/resume-repository";
+import type { MessageRepository } from "../repository/message-repository";
+import {
+  MAX_TURNS_BY_LEVEL,
+  SessionRepository,
+  type CreateSessionParams,
+} from "../repository/session-repository";
+import { SessionService } from "./session-service";
+
+const validStructuredSummary = {
+  personal_info: {
+    name: "Jane Doe",
+    title: "Software Engineer",
+  },
+  skills: ["TypeScript"],
+  experiences: [
+    {
+      company: "Acme",
+      role: "Engineer",
+      highlights: ["Built APIs"],
+    },
+  ],
+  projects: [{ name: "Interview Prep" }],
+};
+
+const userId = 1;
+const resumeId = "resume-id";
+const sessionId = "session-id";
+
+function createStubResumeRepository(initialResume: Resume | null = null) {
+  let resume = initialResume;
+
+  return {
+    get resume() {
+      return resume;
+    },
+    set resume(value) {
+      resume = value;
+    },
+    findByIdAndUserId: async () => resume,
+  } as unknown as ResumeRepository & { resume: Resume | null };
+}
+
+function createStubSessionRepository() {
+  const state = {
+    sessions: [] as Awaited<ReturnType<SessionRepository["listByUserId"]>>,
+    sessionById: null as Awaited<
+      ReturnType<SessionRepository["findByIdAndUserId"]>
+    >,
+    createCalls: [] as CreateSessionParams[],
+  };
+
+  const repository = {
+    get sessions() {
+      return state.sessions;
+    },
+    set sessions(value) {
+      state.sessions = value;
+    },
+    get sessionById() {
+      return state.sessionById;
+    },
+    set sessionById(value) {
+      state.sessionById = value;
+    },
+    get createCalls() {
+      return state.createCalls;
+    },
+    create: async (params: CreateSessionParams) => {
+      state.createCalls.push(params);
+      return {
+        id: sessionId,
+        userId: params.userId,
+        resumeId: params.resumeId,
+        level: params.level,
+        turnCount: 0,
+        maxTurns: MAX_TURNS_BY_LEVEL[params.level],
+        isFinished: false,
+        createdAt: new Date("2026-01-01T00:00:00.000Z"),
+      };
+    },
+    listByUserId: async () => state.sessions,
+    findByIdAndUserId: async () => state.sessionById,
+    incrementTurnCount: async (id: string) => ({
+      id,
+      userId,
+      resumeId,
+      level: "entry" as const,
+      turnCount: 1,
+      maxTurns: 5,
+      isFinished: false,
+      createdAt: new Date(),
+    }),
+    markFinished: async (id: string) => ({
+      id,
+      userId,
+      resumeId,
+      level: "entry" as const,
+      turnCount: 1,
+      maxTurns: 5,
+      isFinished: true,
+      createdAt: new Date(),
+    }),
+  };
+
+  return repository as unknown as SessionRepository & typeof repository;
+}
+
+function createStubMessageRepository() {
+  const state = {
+    messages: [] as Awaited<ReturnType<MessageRepository["listBySessionId"]>>,
+  };
+
+  return {
+    get messages() {
+      return state.messages;
+    },
+    set messages(value) {
+      state.messages = value;
+    },
+    listBySessionId: async () => state.messages,
+  } as unknown as MessageRepository & { messages: typeof state.messages };
+}
+
+describe("SessionService", () => {
+  let resumeRepository: ReturnType<typeof createStubResumeRepository>;
+  let sessionRepository: ReturnType<typeof createStubSessionRepository>;
+  let messageRepository: ReturnType<typeof createStubMessageRepository>;
+  let service: SessionService;
+
+  beforeEach(() => {
+    resumeRepository = createStubResumeRepository();
+    sessionRepository = createStubSessionRepository();
+    messageRepository = createStubMessageRepository();
+    service = new SessionService(
+      sessionRepository,
+      messageRepository,
+      resumeRepository,
+    );
+  });
+
+  it("throws NotFoundError when the resume does not belong to the user", async () => {
+    resumeRepository.resume = null;
+
+    await expect(
+      service.createSession(userId, { resumeId, level: "entry" }),
+    ).rejects.toBeInstanceOf(NotFoundError);
+  });
+
+  it("throws BadRequestError when the resume is still processing", async () => {
+    resumeRepository = createStubResumeRepository({
+      id: resumeId,
+      userId,
+      name: "resume.pdf",
+      pdfUrl: "resumes/1/file.pdf",
+      storageKey: "resumes/1/file.pdf",
+      structuredSummary: validStructuredSummary,
+      rawText: "text",
+      status: ResumeStatus.processing,
+      errorMessage: null,
+      createdAt: new Date(),
+    });
+    service = new SessionService(
+      sessionRepository,
+      messageRepository,
+      resumeRepository,
+    );
+
+    await expect(
+      service.createSession(userId, { resumeId, level: "entry" }),
+    ).rejects.toThrow(
+      new BadRequestError("Resume is still being processed"),
+    );
+  });
+
+  it("throws BadRequestError when the resume processing failed", async () => {
+    resumeRepository = createStubResumeRepository({
+      id: resumeId,
+      userId,
+      name: "resume.pdf",
+      pdfUrl: "resumes/1/file.pdf",
+      storageKey: "resumes/1/file.pdf",
+      structuredSummary: validStructuredSummary,
+      rawText: "text",
+      status: ResumeStatus.failed,
+      errorMessage: "PDF parse error",
+      createdAt: new Date(),
+    });
+    service = new SessionService(
+      sessionRepository,
+      messageRepository,
+      resumeRepository,
+    );
+
+    await expect(
+      service.createSession(userId, { resumeId, level: "entry" }),
+    ).rejects.toThrow(new BadRequestError("Resume processing failed"));
+  });
+
+  it("creates a session when resume is ready even if structured summary no longer matches schema", async () => {
+    resumeRepository = createStubResumeRepository({
+      id: resumeId,
+      userId,
+      name: "resume.pdf",
+      pdfUrl: "resumes/1/file.pdf",
+      storageKey: "resumes/1/file.pdf",
+      structuredSummary: { personal_info: { name: "Jane" } },
+      rawText: "text",
+      status: ResumeStatus.ready,
+      errorMessage: null,
+      createdAt: new Date(),
+    });
+    service = new SessionService(
+      sessionRepository,
+      messageRepository,
+      resumeRepository,
+    );
+
+    const result = await service.createSession(userId, {
+      resumeId,
+      level: "entry",
+    });
+
+    expect(result).toEqual({ id: sessionId });
+  });
+
+  it.each([
+    ["entry", 5],
+    ["mid", 7],
+    ["senior", 8],
+  ] as const)(
+    "creates a session with maxTurns %s for level %s",
+    async (level, maxTurns) => {
+      resumeRepository = createStubResumeRepository({
+        id: resumeId,
+        userId,
+        name: "resume.pdf",
+        pdfUrl: "resumes/1/file.pdf",
+        storageKey: "resumes/1/file.pdf",
+        structuredSummary: validStructuredSummary,
+        rawText: "text",
+        status: ResumeStatus.ready,
+        errorMessage: null,
+        createdAt: new Date(),
+      });
+      service = new SessionService(
+        sessionRepository,
+        messageRepository,
+        resumeRepository,
+      );
+
+      const result = await service.createSession(userId, { resumeId, level });
+
+      expect(result).toEqual({ id: sessionId });
+      expect(sessionRepository.createCalls[0]).toEqual({
+        userId,
+        resumeId,
+        level,
+      });
+      expect(MAX_TURNS_BY_LEVEL[level]).toBe(maxTurns);
+    },
+  );
+
+  it("lists sessions for the authenticated user", async () => {
+    const createdAt = new Date("2026-01-02T00:00:00.000Z");
+    sessionRepository.sessions = [
+      {
+        id: sessionId,
+        userId,
+        resumeId,
+        level: "mid",
+        turnCount: 2,
+        maxTurns: 7,
+        isFinished: false,
+        createdAt,
+      },
+    ];
+
+    const result = await service.listSessions(userId);
+
+    expect(result).toEqual([
+      {
+        id: sessionId,
+        resumeId,
+        level: "mid",
+        turnCount: 2,
+        maxTurns: 7,
+        isFinished: false,
+        createdAt,
+      },
+    ]);
+  });
+
+  it("returns messages ordered for an owned session", async () => {
+    const createdAt = new Date("2026-01-03T00:00:00.000Z");
+    sessionRepository.sessionById = {
+      id: sessionId,
+      userId,
+      resumeId,
+      level: "entry",
+      turnCount: 1,
+      maxTurns: 5,
+      isFinished: false,
+      createdAt,
+    };
+    messageRepository.messages = [
+      {
+        id: "message-1",
+        sessionId,
+        userId,
+        role: "human",
+        content: "Hello",
+        createdAt,
+      },
+      {
+        id: "message-2",
+        sessionId,
+        userId,
+        role: "ai",
+        content: "Hi there",
+        createdAt: new Date("2026-01-03T00:00:01.000Z"),
+      },
+    ];
+
+    const result = await service.getMessages(userId, sessionId);
+
+    expect(result).toEqual([
+      {
+        id: "message-1",
+        role: "human",
+        content: "Hello",
+        createdAt,
+      },
+      {
+        id: "message-2",
+        role: "ai",
+        content: "Hi there",
+        createdAt: new Date("2026-01-03T00:00:01.000Z"),
+      },
+    ]);
+  });
+
+  it("throws NotFoundError when loading messages for another user's session", async () => {
+    sessionRepository.sessionById = null;
+
+    await expect(service.getMessages(userId, sessionId)).rejects.toBeInstanceOf(
+      NotFoundError,
+    );
+  });
+});

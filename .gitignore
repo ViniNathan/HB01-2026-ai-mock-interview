@@ -46,3 +46,8 @@ coverage
 .cache
 tmp
 temp
+
+.agents
+.codex
+.cursor
+.windsurf
