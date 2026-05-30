@@ -57,7 +57,7 @@ Three contexts run checks at different depth. Use this table to see what runs wh
 Workflow file (repo root): [`.github/workflows/backend-ci.yml`](../../.github/workflows/backend-ci.yml).
 
 - **Triggers**: `pull_request`; `push` to `main` or `master`
-- **Job**: `quality` on `ubuntu-latest`, `working-directory: Backend`, `NODE_ENV=test`
+- **Job**: `quality` on `ubuntu-latest`, `working-directory: backend`, `NODE_ENV=test`
 - **Steps** (in order):
   1. Checkout
   2. Setup Bun (`oven-sh/setup-bun@v2`)
@@ -73,7 +73,7 @@ PR **quality** CI does **not** run integration or E2E (no Docker on that job). U
 Workflow file (repo root): [`.github/workflows/backend-integration-e2e.yml`](../../.github/workflows/backend-integration-e2e.yml).
 
 - **Triggers**: `push` to `main` only; `workflow_dispatch` (manual)
-- **Job**: `integration-e2e` on `ubuntu-latest` (Docker available), `working-directory: Backend`, `timeout-minutes: 30`, `NODE_ENV=test`
+- **Job**: `integration-e2e` on `ubuntu-latest` (Docker available), `working-directory: backend`, `timeout-minutes: 30`, `NODE_ENV=test`
 - **Steps** (in order):
   1. Checkout
   2. Setup Bun (`oven-sh/setup-bun@v2`)
@@ -95,7 +95,7 @@ Unit tests only — no `check-types`, no Docker. Keeps commits fast while catchi
 
 ### Local gates
 
-**Quick gate** (matches CI — run from `Backend/`):
+**Quick gate** (matches CI — run from `backend/` at monorepo root):
 
 ```bash
 bun run lint && bun run check-types && bun run test
