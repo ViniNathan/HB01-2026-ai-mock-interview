@@ -2,8 +2,11 @@ import { randomUUID } from "node:crypto";
 
 import type { ChatOpenAI } from "@langchain/openai";
 
-import type { Resume } from "../../../../prisma/generated/client";
-import { ResumeStatus } from "../../../../prisma/generated/client";
+import {
+  RESUME_STATUS,
+  type ResumeRecord,
+  type ResumeStatus,
+} from "@/modules/resumes/types/resume-record";
 import { env } from "@/config/env";
 import type { IObjectStorage } from "@/modules/resumes/protocols/object-storage";
 import type { IResumeQueue } from "@/modules/resumes/protocols/resume-queue";
@@ -158,7 +161,7 @@ export class ResumeService {
   }
 }
 
-function toResumePreview(resume: Resume): ResumePreview {
+function toResumePreview(resume: ResumeRecord): ResumePreview {
   return {
     id: resume.id,
     name: resume.name,
@@ -167,10 +170,10 @@ function toResumePreview(resume: Resume): ResumePreview {
   };
 }
 
-function toResumeDetail(resume: Resume): ResumeDetail {
+function toResumeDetail(resume: ResumeRecord): ResumeDetail {
   const preview = toResumePreview(resume);
 
-  if (resume.status !== ResumeStatus.ready || resume.structuredSummary === null) {
+  if (resume.status !== RESUME_STATUS.ready || resume.structuredSummary === null) {
     return preview;
   }
 

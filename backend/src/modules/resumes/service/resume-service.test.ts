@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { ResumeStatus } from "../../../../prisma/generated/client";
+import { RESUME_STATUS } from "@/modules/resumes/types/resume-record";
 import type { IObjectStorage } from "@/modules/resumes/protocols/object-storage";
 import type { IResumeQueue } from "@/modules/resumes/protocols/resume-queue";
 import { buildResumeExtractionPrompt } from "@/modules/resumes/prompts/resume-extraction-prompt";
@@ -34,9 +34,10 @@ const sampleResume = {
   storageKey: "users/42/resumes/resume-uuid.pdf",
   structuredSummary: null,
   rawText: null,
-  status: ResumeStatus.processing,
+  status: RESUME_STATUS.processing,
   errorMessage: null,
   createdAt: new Date("2026-01-01T00:00:00.000Z"),
+  updatedAt: new Date("2026-01-01T00:00:00.000Z"),
 };
 
 function createPdfFile(
@@ -155,7 +156,7 @@ describe("ResumeService", () => {
       expect(result).toEqual({
         id: "resume-uuid",
         name: "Jane Doe CV.pdf",
-        status: ResumeStatus.processing,
+        status: RESUME_STATUS.processing,
         createdAt: sampleResume.createdAt,
       });
     });
@@ -224,7 +225,7 @@ describe("ResumeService", () => {
     it("returns resume detail without sensitive fields", async () => {
       const readyResume = {
         ...sampleResume,
-        status: ResumeStatus.ready,
+        status: RESUME_STATUS.ready,
         structuredSummary: {
           personal_info: { name: "Jane", title: "Engineer" },
           skills: ["TypeScript"],
@@ -252,7 +253,7 @@ describe("ResumeService", () => {
       expect(result).toEqual({
         id: "resume-uuid",
         name: "Jane Doe CV.pdf",
-        status: ResumeStatus.ready,
+        status: RESUME_STATUS.ready,
         createdAt: sampleResume.createdAt,
         structuredSummary: readyResume.structuredSummary,
       });
@@ -271,7 +272,7 @@ describe("ResumeService", () => {
       expect(result).toEqual({
         id: "resume-uuid",
         name: "Jane Doe CV.pdf",
-        status: ResumeStatus.processing,
+        status: RESUME_STATUS.processing,
         createdAt: sampleResume.createdAt,
       });
       expect(result).not.toHaveProperty("structuredSummary");
@@ -291,7 +292,7 @@ describe("ResumeService", () => {
       vi.mocked(resumeRepository.findById).mockResolvedValue(sampleResume);
       vi.mocked(resumeRepository.updateReady).mockResolvedValue({
         ...sampleResume,
-        status: ResumeStatus.ready,
+        status: RESUME_STATUS.ready,
         structuredSummary,
         rawText,
       });
