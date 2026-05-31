@@ -1,12 +1,14 @@
 import {
   BadRequestError,
-  logger,
-  toUserWithoutPassword,
   UnauthorizedError,
+} from "@/shared/errors/http-errors";
+import { logger } from "@/shared/logger";
+import {
+  toUserWithoutPassword,
   type CreateUserParams,
   type LoginParams,
   type UserWithoutPassword,
-} from "@/shared";
+} from "@/shared/types/user";
 import type { IMailer, IPasswordHasher, ITokenService } from "../protocols";
 import { env } from "@/config/env";
 import { randomUUID } from "node:crypto";

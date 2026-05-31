@@ -22,13 +22,9 @@ vi.mock("node:crypto", () => ({
   randomUUID: mockRandomUUID,
 }));
 
-vi.mock("@/shared", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/shared")>();
-  return {
-    ...actual,
-    logger: stubLogger,
-  };
-});
+vi.mock("@/shared/logger", () => ({
+  logger: stubLogger,
+}));
 
 vi.mock("@/config/env", () => ({
   env: {

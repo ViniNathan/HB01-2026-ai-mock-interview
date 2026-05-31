@@ -1,6 +1,6 @@
 import { env } from "@/config/env";
 import { setupSwagger } from "@/docs/setup-swagger";
-import { errorHandler } from "@/shared";
+import { errorHandler } from "@/shared/middlewares/error-handler-middleware";
 import cors from "cors";
 import express, { type Express } from "express";
 

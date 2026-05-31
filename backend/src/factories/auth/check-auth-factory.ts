@@ -1,4 +1,4 @@
-import { makeCheckAuthMiddleware } from "@/modules/auth";
+import { makeCheckAuthMiddleware } from "@/modules/auth/middlewares/check-auth-middleware";
 import { JwtTokenService } from "@/shared";
 import { env } from "@/config/env";
 import type { RequestHandler } from "express";
