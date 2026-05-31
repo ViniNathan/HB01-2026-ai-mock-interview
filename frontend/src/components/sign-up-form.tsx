@@ -31,10 +31,7 @@ export default function SignUpForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
-      return;
-    }
+    if (password !== confirmPassword) return;
     setIsSubmitting(true);
     try {
       await signup(name, email, password, confirmPassword);
@@ -102,6 +99,9 @@ export default function SignUpForm({
               minLength={6}
               autoComplete="new-password"
             />
+            <p className={`text-xs ${password.length === 0 ? "text-text-muted" : password.length < 6 ? "text-destructive" : "text-[--status-success-foreground]"}`}>
+              {password.length < 6 ? `Minimum 6 characters (${password.length}/6)` : "Password length is valid"}
+            </p>
           </div>
 
           <div className="space-y-2">
@@ -118,6 +118,11 @@ export default function SignUpForm({
               minLength={6}
               autoComplete="new-password"
             />
+            {confirmPassword.length > 0 && (
+              <p className={`text-xs ${password === confirmPassword ? "text-[--status-success-foreground]" : "text-destructive"}`}>
+                {password === confirmPassword ? "Passwords match" : "Passwords do not match"}
+              </p>
+            )}
           </div>
         </CardContent>
 
