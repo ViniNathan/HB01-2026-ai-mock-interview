@@ -1,4 +1,5 @@
-import { AuthService, UserRepository } from "@/modules/auth";
+import { UserRepository } from "@/modules/auth/repository/user-repository";
+import { AuthService } from "@/modules/auth/service/auth-service";
 import {
   BcryptPasswordHasher,
   JwtTokenService,

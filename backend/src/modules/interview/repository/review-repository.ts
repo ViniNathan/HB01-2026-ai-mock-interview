@@ -39,6 +39,13 @@ export class ReviewRepository {
     return rows.map(toReviewItemRecord);
   }
 
+  async deleteByIdAndUserId(id: string, userId: number): Promise<boolean> {
+    const result = await prisma.reviewItem.deleteMany({
+      where: { id, userId },
+    });
+    return result.count > 0;
+  }
+
   async findByUserIdAndTopicCaseInsensitive(
     userId: number,
     topic: string,

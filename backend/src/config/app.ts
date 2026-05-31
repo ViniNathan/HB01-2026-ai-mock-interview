@@ -1,6 +1,6 @@
 import { env } from "@/config/env";
 import { setupSwagger } from "@/docs/setup-swagger";
-import { errorHandler } from "@/shared";
+import { errorHandler } from "@/shared/middlewares/error-handler-middleware";
 import cors from "cors";
 import express, { type Express } from "express";
 
@@ -16,7 +16,7 @@ export async function createApp(): Promise<Express> {
   app.use(
     cors({
       origin: env.CORS_ORIGIN,
-      methods: ["GET", "POST", "OPTIONS"],
+      methods: ["GET", "POST", "DELETE", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization"],
       credentials: true,
     }),

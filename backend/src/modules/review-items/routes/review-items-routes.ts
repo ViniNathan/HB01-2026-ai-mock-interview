@@ -7,4 +7,5 @@ export default function reviewItemsRoutes(router: Router): void {
   const controller = makeReviewItemsController();
 
   router.get("/", asyncHandler(controller.list));
+  router.delete("/:id", asyncHandler(controller.remove));
 }
