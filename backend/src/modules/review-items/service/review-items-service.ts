@@ -2,6 +2,7 @@ import type { ReviewRepository } from "@/modules/interview/repository/review-rep
 import type { ReviewItemRecord } from "@/modules/interview/types/review-item-record";
 import type { ReviewPriority } from "@/modules/interview/validations/interview-schemas";
 import type { ReviewItemResponse } from "@/modules/review-items/validations/review-items-schemas";
+import { NotFoundError } from "@/shared";
 
 const PRIORITY_RANK: Record<ReviewPriority, number> = {
   low: 0,
@@ -38,5 +39,13 @@ export class ReviewItemsService {
   async listForUser(userId: number): Promise<ReviewItemResponse[]> {
     const items = await this.reviewRepository.listByUserId(userId);
     return [...items].sort(compareReviewItems).map(toResponse);
+  }
+
+  async deleteForUser(userId: number, id: string): Promise<void> {
+    const deleted = await this.reviewRepository.deleteByIdAndUserId(id, userId);
+
+    if (!deleted) {
+      throw new NotFoundError("Review item not found");
+    }
   }
 }

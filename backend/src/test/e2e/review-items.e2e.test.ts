@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 
 import request from "supertest";
@@ -151,6 +152,124 @@ describe("Review Items API E2E", () => {
         topic: "TypeScript",
         priority: "medium",
       });
+    });
+  });
+
+  describe("DELETE /api/review-items/:id", () => {
+    it("returns 401 without authentication", async () => {
+      const response = await request(app).delete(
+        `/api/review-items/${randomUUID()}`,
+      );
+
+      expect(response.status).toBe(401);
+      expect(response.body).toEqual({
+        message: "Authentication required",
+      });
+    });
+
+    it("returns 204 and removes the item for the owner", async () => {
+      const token = await authenticate(app);
+      const loginResponse = await loginUser(app);
+      const userId = loginResponse.body.user.id as number;
+      const resume = await seedReadyResume(userId);
+
+      const session = await prisma.interviewSession.create({
+        data: {
+          userId,
+          resumeId: resume.id,
+          level: "entry",
+          maxTurns: 5,
+        },
+      });
+
+      const item = await prisma.reviewItem.create({
+        data: {
+          userId,
+          sessionId: session.id,
+          topic: "System Design",
+          description: "Practice scalability trade-offs.",
+          priority: ReviewPriority.high,
+        },
+      });
+
+      const deleteResponse = await request(app)
+        .delete(`/api/review-items/${item.id}`)
+        .set(authHeader(token));
+
+      expect(deleteResponse.status).toBe(204);
+      expect(deleteResponse.body).toEqual({});
+
+      const listResponse = await request(app)
+        .get("/api/review-items/")
+        .set(authHeader(token));
+
+      expect(listResponse.status).toBe(200);
+      expect(listResponse.body).toEqual({ reviewItems: [] });
+
+      const stored = await prisma.reviewItem.findUnique({
+        where: { id: item.id },
+      });
+      expect(stored).toBeNull();
+    });
+
+    it("returns 404 when review item does not exist", async () => {
+      const token = await authenticate(app);
+
+      const response = await request(app)
+        .delete(`/api/review-items/${randomUUID()}`)
+        .set(authHeader(token));
+
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({ message: "Review item not found" });
+    });
+
+    it("returns 404 when review item belongs to another user", async () => {
+      await authenticate(app);
+      const loginResponse = await loginUser(app);
+      const userId = loginResponse.body.user.id as number;
+      const resume = await seedReadyResume(userId);
+
+      const session = await prisma.interviewSession.create({
+        data: {
+          userId,
+          resumeId: resume.id,
+          level: "entry",
+          maxTurns: 5,
+        },
+      });
+
+      const item = await prisma.reviewItem.create({
+        data: {
+          userId,
+          sessionId: session.id,
+          topic: "System Design",
+          description: "Practice scalability trade-offs.",
+          priority: ReviewPriority.high,
+        },
+      });
+
+      await request(app)
+        .post("/api/auth/signup")
+        .send(
+          createSignupPayload({
+            email: "other@example.com",
+            name: "Other User",
+          }),
+        );
+      const otherLogin = await loginUser(app, { email: "other@example.com" });
+      const otherToken = otherLogin.body.accessToken as string;
+
+      const response = await request(app)
+        .delete(`/api/review-items/${item.id}`)
+        .set(authHeader(otherToken));
+
+      expect(response.status).toBe(404);
+      expect(response.body).toEqual({ message: "Review item not found" });
+
+      const stored = await prisma.reviewItem.findUnique({
+        where: { id: item.id },
+      });
+      expect(stored).not.toBeNull();
     });
   });
 });

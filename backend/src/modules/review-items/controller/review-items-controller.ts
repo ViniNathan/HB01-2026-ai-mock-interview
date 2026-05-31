@@ -8,4 +8,10 @@ export class ReviewItemsController {
     const reviewItems = await this.reviewItemsService.listForUser(req.userId!);
     res.status(200).json({ reviewItems });
   };
+
+  remove = async (req: Request, res: Response): Promise<void> => {
+    const id = String(req.params.id);
+    await this.reviewItemsService.deleteForUser(req.userId!, id);
+    res.status(204).send();
+  };
 }

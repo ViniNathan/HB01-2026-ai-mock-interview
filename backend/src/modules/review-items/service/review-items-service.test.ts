@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { ReviewRepository } from "@/modules/interview/repository/review-repository";
 import type { ReviewItemRecord } from "@/modules/interview/types/review-item-record";
+import { NotFoundError } from "@/shared";
 
 import { ReviewItemsService } from "./review-items-service";
 
@@ -31,6 +32,7 @@ describe("ReviewItemsService", () => {
   beforeEach(() => {
     reviewRepository = {
       listByUserId: vi.fn(),
+      deleteByIdAndUserId: vi.fn(),
     } as unknown as ReviewRepository;
     service = new ReviewItemsService(reviewRepository);
   });
@@ -85,5 +87,26 @@ describe("ReviewItemsService", () => {
     const result = await service.listForUser(42);
 
     expect(result).toEqual([]);
+  });
+
+  describe("deleteForUser", () => {
+    it("deletes the review item when it belongs to the user", async () => {
+      vi.mocked(reviewRepository.deleteByIdAndUserId).mockResolvedValue(true);
+
+      await service.deleteForUser(1, "review-id");
+
+      expect(reviewRepository.deleteByIdAndUserId).toHaveBeenCalledWith(
+        "review-id",
+        1,
+      );
+    });
+
+    it("throws NotFoundError when the review item is missing or not owned", async () => {
+      vi.mocked(reviewRepository.deleteByIdAndUserId).mockResolvedValue(false);
+
+      await expect(service.deleteForUser(1, "missing-id")).rejects.toBeInstanceOf(
+        NotFoundError,
+      );
+    });
   });
 });
