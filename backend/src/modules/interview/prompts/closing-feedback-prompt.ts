@@ -67,7 +67,9 @@ function buildInstructionsBlock(): string {
 
 - End with a clear call-to-action directing the candidate to open the **review items** tab to see structured topics to study next.
 
-- Respond in plain text suitable for chat (no JSON).`;
+- Respond in plain text suitable for chat (no JSON).
+
+- Write the entire message in English only.`;
 }
 
 export type BuildClosingFeedbackPromptParams = {

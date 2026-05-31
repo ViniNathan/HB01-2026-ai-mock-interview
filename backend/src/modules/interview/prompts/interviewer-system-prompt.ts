@@ -2,7 +2,10 @@ import type { InterviewLevel } from "@/modules/interview/validations/interview-s
 import { resumeToMarkdown } from "@/modules/resumes/format/resume-to-markdown";
 import type { StructuredSummary } from "@/modules/resumes/validations/resume-schemas";
 
+export const DEFAULT_INTERVIEWER_NAME = "Alex";
+
 export const PERSONA_SECTION_HEADER = "## Role";
+export const LANGUAGE_SECTION_HEADER = "## Language";
 export const GUARDRAILS_SECTION_HEADER = "## Security guardrails";
 export const LEVEL_SECTION_HEADER = "## Interview level";
 export const RESUME_SECTION_HEADER = "## Candidate résumé";
@@ -12,12 +15,20 @@ export const CONTEXT_SECTION_HEADER = "## Conversation context";
 // Persona
 // ---------------------------------------------------------------------------
 
-function buildPersonaBlock(level: InterviewLevel): string {
+function buildPersonaBlock(
+  level: InterviewLevel,
+  interviewerName: string,
+): string {
   return `${PERSONA_SECTION_HEADER}
-You are an experienced Tech Lead conducting a ${level}-level mock technical interview.
-Your goal is to give the candidate realistic, structured, and constructive practice that reflects what they would face in a real hiring process.`;
+You are ${interviewerName}, an experienced Tech Lead conducting a ${level}-level mock technical interview.
+Your goal is to give the candidate realistic, structured, and constructive practice that reflects what they would face in a real hiring process.
+When you introduce yourself, use the name ${interviewerName} only — never placeholders such as [Interviewer] or [Your Name].`;
 }
 
+function buildLanguageBlock(): string {
+  return `${LANGUAGE_SECTION_HEADER}
+- Write every message in English only, regardless of the résumé language or the candidate's language.`;
+}
 // ---------------------------------------------------------------------------
 // Guardrails
 // ---------------------------------------------------------------------------
@@ -72,20 +83,28 @@ function resolvePhase(turnCount: number, maxTurns: number): InterviewPhase {
   return "mid";
 }
 
-const PHASE_INSTRUCTIONS: Record<InterviewPhase, string> = {
-  opening:
-    "Introduce yourself briefly, set the interview tone, and ask your first question.",
-  mid: "Go deeper on previous answers before introducing new topics. Reference what the candidate said explicitly when following up.",
-  closing:
+const PHASE_INSTRUCTIONS: Record<
+  InterviewPhase,
+  (interviewerName: string) => string
+> = {
+  opening: (interviewerName) =>
+    `Introduce yourself briefly as ${interviewerName}, set the interview tone, and ask your first question.`,
+  mid: () =>
+    "Go deeper on previous answers before introducing new topics. Reference what the candidate said explicitly when following up.",
+  closing: () =>
     "Wrap up open threads. Ask one final synthesis question that ties together the candidate's experience and the role's demands, then close the interview.",
 };
 
-function buildContextBlock(turnCount: number, maxTurns: number): string {
+function buildContextBlock(
+  turnCount: number,
+  maxTurns: number,
+  interviewerName: string,
+): string {
   const phase = resolvePhase(turnCount, maxTurns);
 
   return `${CONTEXT_SECTION_HEADER}
 Turn ${turnCount} of ${maxTurns}.
-Phase: ${phase} — ${PHASE_INSTRUCTIONS[phase]}
+Phase: ${phase} — ${PHASE_INSTRUCTIONS[phase](interviewerName)}
 Ask one question per turn. When referencing prior answers, name them explicitly: "Earlier you mentioned X..."`;
 }
 
@@ -94,16 +113,20 @@ export type BuildInterviewerSystemPromptParams = {
   resumeSummary: StructuredSummary;
   turnCount: number;
   maxTurns: number;
+  interviewerName?: string;
 };
 
 export function buildInterviewerSystemPrompt(
   params: BuildInterviewerSystemPromptParams,
 ): string {
+  const interviewerName = params.interviewerName ?? DEFAULT_INTERVIEWER_NAME;
+
   return [
-    buildPersonaBlock(params.level),
+    buildPersonaBlock(params.level, interviewerName),
+    buildLanguageBlock(),
     buildGuardrailsBlock(),
     buildLevelBlock(params.level),
     buildResumeBlock(params.resumeSummary),
-    buildContextBlock(params.turnCount, params.maxTurns),
+    buildContextBlock(params.turnCount, params.maxTurns, interviewerName),
   ].join("\n\n");
 }
