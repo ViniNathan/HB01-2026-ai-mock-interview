@@ -2,6 +2,10 @@
 
 Hone is an AI-powered mock interview platform that helps software engineers prepare for technical interviews through personalized, resume-aware practice sessions with real-time feedback.
 
+## Live Demo
+
+**[https://frontend-five-virid-83.vercel.app](https://frontend-five-virid-83.vercel.app)**
+
 ## Problem
 
 Most engineers practice coding in isolation but struggle in real interviews because they lack structured feedback on communication, depth of answers, and topic coverage. Hone fills that gap by simulating realistic technical interviews driven by your own resume, giving you actionable feedback and a study backlog to close your knowledge gaps.
