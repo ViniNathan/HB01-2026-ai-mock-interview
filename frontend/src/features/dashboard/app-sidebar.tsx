@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Dumbbell, MessageSquare, LogOut, FileText, User } from "lucide-react";
+import { LayoutDashboard, Dumbbell, MessageSquare, LogOut, FileText, User, X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/features/auth/session-provider";
@@ -15,15 +15,31 @@ const NAV_ITEMS = [
   { icon: User, label: "Profile", href: "/profile" },
 ] as const;
 
-export function AppSidebar() {
+type AppSidebarProps = {
+  isOpen?: boolean;
+  onClose?: () => void;
+};
+
+export function AppSidebar({ isOpen, onClose }: AppSidebarProps) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
 
-  return (
-    <aside className="flex w-52 shrink-0 flex-col bg-[#163630] text-white">
-      <div className="px-5 pt-6 pb-8">
-        <p className="text-lg font-semibold tracking-tight">Hone</p>
-        <p className="mt-0.5 text-xs text-white/50">AI Interview Expert</p>
+  const sidebar = (
+    <aside className="flex h-full w-52 shrink-0 flex-col bg-[#163630] text-white">
+      <div className="flex items-center justify-between px-5 pt-6 pb-8">
+        <div>
+          <p className="text-lg font-semibold tracking-tight">Hone</p>
+          <p className="mt-0.5 text-xs text-white/50">AI Interview Expert</p>
+        </div>
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="cursor-pointer text-white/50 hover:text-white md:hidden"
+          >
+            <X className="h-5 w-5" />
+          </button>
+        )}
       </div>
 
       <nav className="flex-1 space-y-0.5 px-3">
@@ -33,6 +49,7 @@ export function AppSidebar() {
             <Link
               key={href}
               href={href}
+              onClick={onClose}
               className={cn(
                 "cursor-pointer flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors",
                 active
@@ -50,6 +67,7 @@ export function AppSidebar() {
       <div className="space-y-3 px-3 pb-6">
         <Link
           href="/practice"
+          onClick={onClose}
           className="cursor-pointer flex w-full items-center justify-center gap-2 rounded-lg bg-white/15 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-white/20"
         >
           <Dumbbell className="h-4 w-4" />
@@ -68,5 +86,27 @@ export function AppSidebar() {
         </button>
       </div>
     </aside>
+  );
+
+  return (
+    <>
+      {/* Desktop sidebar */}
+      <div className="hidden md:flex">
+        {sidebar}
+      </div>
+
+      {/* Mobile drawer overlay */}
+      {isOpen && (
+        <div className="fixed inset-0 z-40 md:hidden">
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={onClose}
+          />
+          <div className="absolute inset-y-0 left-0 flex">
+            {sidebar}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
