@@ -17,15 +17,17 @@ const toneClasses: Record<string, string> = {
 };
 
 function OrbStripSection({ tones }: OrbStripSectionProps) {
+  const loop = [...tones, ...tones];
+
   return (
-    <section className="overflow-hidden py-12 md:py-16">
-      <div className="content-width">
-        <div className="grid grid-flow-col justify-center gap-5">
-          {tones.map((tone, index) => (
+    <section className="overflow-hidden py-14 md:py-20">
+      <div className="group relative [mask-image:linear-gradient(90deg,transparent,black_12%,black_88%,transparent)]">
+        <div className="flex w-max animate-[marquee_28s_linear_infinite] items-center gap-8 group-hover:[animation-play-state:paused] md:gap-12">
+          {loop.map((tone, index) => (
             <div
               key={`${tone}-${index}`}
               className={cn(
-                "size-14 shrink-0 rounded-full shadow-[0_14px_28px_rgba(17,14,12,0.16)] md:size-16",
+                "size-14 shrink-0 rounded-full shadow-[0_14px_28px_rgba(17,14,12,0.16)] transition-transform duration-300 hover:scale-110 md:size-16",
                 index % 2 === 0
                   ? "[animation:orb-sway-up_4.8s_ease-in-out_infinite]"
                   : "[animation:orb-sway-down_4.8s_ease-in-out_infinite]",

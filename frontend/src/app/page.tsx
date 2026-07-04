@@ -1,68 +1,15 @@
-import { FeaturesSection } from "@/components/sections/features-section";
+"use client";
+
 import { FaqSection } from "@/components/sections/faq-section";
+import { FeaturesSection } from "@/components/sections/features-section";
 import { FinalCtaSection } from "@/components/sections/final-cta-section";
 import { HeroSection } from "@/components/sections/hero-section";
 import { MarketingFooter } from "@/components/sections/marketing-footer";
 import { OrbStripSection } from "@/components/sections/orb-strip-section";
 import { PracticeSection } from "@/components/sections/practice-section";
+import { TestimonialsSection } from "@/components/sections/testimonials-section";
 import { MarketingShell } from "@/components/shells/marketing-shell";
-
-const featureCards = [
-  {
-    title: "AI Resumes",
-    description:
-      "Instant analysis of your experience against role requirements.",
-    variant: "resume",
-  },
-  {
-    title: "Senior Mode",
-    description: "Focusing on high-level system design and leadership signals.",
-    variant: "senior",
-    badge: "Active",
-  },
-  {
-    title: "Streaming",
-    description: "Real-time adaptive questioning based on your last answer.",
-    variant: "stream",
-  },
-  {
-    title: "Tech Review",
-    description: "Detailed breakdown of your technical strengths.",
-    variant: "review",
-  },
-] as const;
-
-const topicCards = [
-  { title: "Distributed Consensus", status: "Critical", tone: "critical" },
-  { title: "CAP Theorem", status: "Mastered", tone: "good" },
-  { title: "Kafka Internals", status: "Review", tone: "neutral" },
-  { title: "Query Plan Ops", status: "Mastered", tone: "good" },
-  { title: "LRU Caching", status: "Mastered", tone: "good" },
-  { title: "Binary Search", status: "Mastered", tone: "good" },
-] as const;
-
-const faqItems = [
-  {
-    question: "What levels does Hone support?",
-    answer:
-      "We support practice tracks from Junior to Staff and Principal, with tailored prompts for backend, frontend, full-stack, and mobile interviews.",
-  },
-  {
-    question: "Is my interview data private?",
-    answer:
-      "Yes. Sessions are scoped to your account context and are used only to drive the interview flow, final feedback, and review backlog.",
-  },
-  {
-    question: "Can I invite my team?",
-    answer:
-      "Yes. Team practice flows can share curated interview prompts, review patterns, and learning loops across engineers.",
-  },
-  {
-    question: "How does the pricing work?",
-    answer:
-      "Individual practice starts free. Team features and deeper review workflows can be layered in later as premium workspace features.",
-  },
-] as const;
+import { useLanguage } from "@/lib/i18n/language-provider";
 
 const orbTones = [
   "graphite",
@@ -76,46 +23,59 @@ const orbTones = [
 ] as const;
 
 export default function Home() {
+  const { t } = useLanguage();
+
   return (
     <MarketingShell>
       <HeroSection
-        kicker="Powered by GPT-5 / Built for engineers"
-        title="The interview"
-        highlight="that prepares you"
+        kicker={t.hero.kicker}
+        title={t.hero.title}
+        highlight={t.hero.highlight}
         ctaHref="/login"
-        ctaLabel="Start your first session"
-        supportingText="Free for individual engineers. No credit card required."
-        preview={{
-          sessionLabel: "Interview Session - Senior Level",
-          question:
-            "At Nubank, we handle millions of concurrent transactions. How would you design a distributed lock mechanism for our credit card ledger?",
-          answer:
-            "I'd start by considering Redis with the Redlock algorithm, but given the ledger requirements, maybe a consensus-based approach like Raft...",
-          prompt: "Explain your architectural decision...",
-          contextTitle: "Context",
-          contextBody:
-            "Analyzing candidate response for consistency versus availability trade-offs.",
-        }}
+        ctaLabel={t.hero.ctaLabel}
+        supportingText={t.hero.supportingText}
+        preview={t.hero.preview}
       />
 
-      <FeaturesSection features={featureCards} topics={topicCards} />
+      <FeaturesSection
+        heading={t.features.heading}
+        highlight={t.features.highlight}
+        features={t.features.cards}
+        topics={t.features.topics}
+        topicTracking={t.features.topicTracking}
+      />
 
       <PracticeSection
-        title="Your personal Tech Lead"
-        description="What can Hone do? Discover everything that can be delegated, from wrangling system architecture to planning your interview roadmap."
-        prompt="Design a highly available notification service that supports 100k requests per second."
-        levels={["Junior", "Mid-Level", "Senior+"]}
-        activeLevel="Senior+"
+        title={t.practice.title}
+        description={t.practice.description}
+        prompt={t.practice.prompt}
+        levels={t.practice.levels}
+        activeLevel={t.practice.activeLevel}
+        activeSessionLabel={t.practice.activeSessionLabel}
       />
 
       <OrbStripSection tones={orbTones} />
-      <FaqSection items={faqItems} />
-      <FinalCtaSection
-        title="Interview with"
-        highlight="confidence"
-        ctaHref="/login"
-        ctaLabel="Use Hone"
+
+      <TestimonialsSection
+        eyebrow={t.carousel.eyebrow}
+        title={t.carousel.title}
+        highlight={t.carousel.highlight}
+        slides={t.carousel.slides}
       />
+
+      <FaqSection
+        eyebrow={t.faq.eyebrow}
+        title={t.faq.title}
+        items={t.faq.items}
+      />
+
+      <FinalCtaSection
+        title={t.finalCta.title}
+        highlight={t.finalCta.highlight}
+        ctaHref="/login"
+        ctaLabel={t.finalCta.ctaLabel}
+      />
+
       <MarketingFooter />
     </MarketingShell>
   );

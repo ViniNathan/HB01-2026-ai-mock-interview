@@ -12,7 +12,12 @@ function TopicStatusCard({ title, status, tone }: TopicStatusCardProps) {
     tone === "critical" ? "critical" : tone === "good" ? "success" : "neutral";
 
   return (
-    <Surface variant="default" padding="md" radius="lg" className="h-full">
+    <Surface
+      variant="default"
+      padding="md"
+      radius="lg"
+      className="h-full transition-[transform,box-shadow] duration-[var(--motion-base)] hover:-translate-y-0.5 hover:shadow-[var(--shadow-soft)]"
+    >
       <p className="text-sm font-semibold tracking-[-0.02em] text-text-strong">
         {title}
       </p>
