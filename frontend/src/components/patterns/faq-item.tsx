@@ -1,25 +1,34 @@
 import { Plus } from "lucide-react";
 
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
 type FaqItemProps = {
   question: string;
   answer: string;
+  value: string;
 };
 
-function FaqItem({ question, answer }: FaqItemProps) {
+function FaqItem({ question, answer, value }: FaqItemProps) {
   return (
-    <details className="group border-b border-border-subtle py-6">
-      <summary className="flex list-none items-center justify-between gap-6 text-left [&::-webkit-details-marker]:hidden">
+    <AccordionItem value={value} className="border-b border-border-subtle">
+      <AccordionTrigger className="group/faq-trigger flex items-center justify-between gap-6 rounded-none py-6 text-left no-underline hover:no-underline">
         <span className="font-display text-[1.4rem] tracking-[-0.04em] text-text-strong md:text-[1.65rem]">
           {question}
         </span>
-        <span className="flex size-9 items-center justify-center rounded-full border border-border-subtle text-text-muted transition-transform duration-300 group-open:rotate-45">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-full border border-border-subtle text-text-muted transition-transform duration-300 group-aria-expanded/faq-trigger:rotate-45">
           <Plus className="size-4" />
         </span>
-      </summary>
-      <p className="max-w-2xl pt-4 text-sm leading-7 text-text-muted md:text-base">
-        {answer}
-      </p>
-    </details>
+      </AccordionTrigger>
+      <AccordionContent className="pt-0 pb-6">
+        <p className="max-w-2xl text-sm leading-7 text-text-muted md:text-base">
+          {answer}
+        </p>
+      </AccordionContent>
+    </AccordionItem>
   );
 }
 

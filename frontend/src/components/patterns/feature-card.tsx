@@ -16,7 +16,7 @@ function FeatureCard({ title, description, variant, badge }: FeatureCardProps) {
       radius="xl"
       padding="lg"
       className={cn(
-        "min-h-[260px] transition-transform duration-[var(--motion-base)] hover:-translate-y-1",
+        "min-h-[260px] transition-[transform,box-shadow] duration-[var(--motion-base)] hover:-translate-y-1.5 hover:shadow-[var(--shadow-elevated)]",
         variant === "senior" && "border-primary/35",
       )}
     >
