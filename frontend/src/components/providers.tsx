@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { Toaster } from "@/components/ui/sonner";
 import { AuthSessionProvider } from "@/features/auth/session-provider";
+import { LanguageProvider } from "@/lib/i18n/language-provider";
 import { queryClient } from "@/lib/query-client";
 
 import { ThemeProvider } from "./theme-provider";
@@ -17,13 +18,15 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       enableSystem={false}
       disableTransitionOnChange
     >
-      <QueryClientProvider client={queryClient}>
-        <AuthSessionProvider>
-          {children}
-          <ReactQueryDevtools />
-        </AuthSessionProvider>
-      </QueryClientProvider>
-      <Toaster richColors />
+      <LanguageProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthSessionProvider>
+            {children}
+            <ReactQueryDevtools />
+          </AuthSessionProvider>
+        </QueryClientProvider>
+        <Toaster richColors />
+      </LanguageProvider>
     </ThemeProvider>
   );
 }
