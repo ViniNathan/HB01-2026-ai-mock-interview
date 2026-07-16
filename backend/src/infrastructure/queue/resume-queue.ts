@@ -2,6 +2,7 @@ import { type ConnectionOptions, Queue } from "bullmq";
 import Redis from "ioredis";
 
 import { env } from "@/config/env";
+import { logger } from "@/shared";
 
 export type ResumeJobData = {
   resumeId: string;
@@ -10,9 +11,15 @@ export type ResumeJobData = {
 export const RESUME_QUEUE_NAME = "resume-processing";
 const RESUME_JOB_NAME = "process";
 
-export const redisConnection = new Redis(env.REDIS_URL, {
+const redis = new Redis(env.REDIS_URL, {
   maxRetriesPerRequest: null,
-}) as ConnectionOptions;
+});
+
+redis.on("error", (error) => {
+  logger.error("Redis connection error", { error: error.message });
+});
+
+export const redisConnection = redis as ConnectionOptions;
 
 const connection = redisConnection;
 
