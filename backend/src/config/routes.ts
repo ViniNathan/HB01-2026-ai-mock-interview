@@ -1,12 +1,15 @@
 import { readdir } from "node:fs/promises";
-import { dirname, join } from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { join } from "node:path";
+import { pathToFileURL } from "node:url";
 import type { Express, Router } from "express";
 import { Router as createRouter } from "express";
 
 type RouteRegistrar = (router: Router) => void;
 
-const modulesDir = join(dirname(fileURLToPath(import.meta.url)), "../modules");
+// Resolved from process.cwd(), not import.meta.url: the bundled production
+// entrypoint (dist/index.mjs) has no "modules" directory next to it, only
+// the unbundled source tree does.
+const modulesDir = join(process.cwd(), "src/modules");
 
 function resolveMountPath(routeFilePath: string): string {
   const normalized = routeFilePath.replace(/\\/g, "/");
