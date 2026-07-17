@@ -58,6 +58,21 @@ describe("serverEnvSchema", () => {
     expect(result.data.R2_ENDPOINT).toBe("https://custom.r2.example.com");
   });
 
+  it("parses a comma-separated CORS_ORIGIN into an array of origins", () => {
+    const result = serverEnvSchema.safeParse({
+      ...validEnv,
+      CORS_ORIGIN: "http://localhost:3001, https://hone-navy.vercel.app",
+    });
+
+    expect(result.success).toBe(true);
+    if (!result.success) return;
+
+    expect(result.data.CORS_ORIGIN).toEqual([
+      "http://localhost:3001",
+      "https://hone-navy.vercel.app",
+    ]);
+  });
+
   it("rejects invalid environment with clear field errors", () => {
     const result = serverEnvSchema.safeParse({
       ...validEnv,

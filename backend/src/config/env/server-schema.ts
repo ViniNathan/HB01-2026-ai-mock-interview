@@ -8,7 +8,14 @@ export const serverEnv = {
 
   // Server
   PORT: z.coerce.number().default(3000),
-  CORS_ORIGIN: z.url(),
+  // Comma-separated list: each deployed frontend (production + teammates'
+  // preview URLs) needs its own allowed origin, since the browser only
+  // sends one Origin header and cors() matches it exactly.
+  CORS_ORIGIN: z
+    .string()
+    .min(1)
+    .transform((value) => value.split(",").map((origin) => origin.trim()))
+    .pipe(z.array(z.url()).min(1)),
   FRONTEND_URL: z.url(),
   NODE_ENV: z
     .enum(["development", "production", "test"])
