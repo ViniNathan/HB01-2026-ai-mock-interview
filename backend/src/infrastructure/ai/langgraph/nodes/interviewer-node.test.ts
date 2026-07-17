@@ -69,7 +69,7 @@ describe("createInterviewerNode", () => {
   });
 
   it("appends closing CTA to AI message when runReview is true", async () => {
-    const model = createMockModel("Session feedback body");
+    const { model } = createMockModel("Session feedback body");
     const node = createInterviewerNode({ model });
 
     const result = await node({ ...baseState, runReview: true });
@@ -79,7 +79,7 @@ describe("createInterviewerNode", () => {
   });
 
   it("does not append closing CTA when runReview is false", async () => {
-    const model = createMockModel("What trade-offs did you consider?");
+    const { model } = createMockModel("What trade-offs did you consider?");
     const node = createInterviewerNode({ model });
 
     const result = await node({ ...baseState, runReview: false });
